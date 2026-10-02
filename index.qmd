@@ -1,0 +1,18 @@
+---
+title: "Answering questions with pandas"
+---
+
+This STAT 386 lesson continues [pandas foundations](https://tjkerby.github.io/stat-386-pandas-foundations/).
+We begin by reading and writing familiar pandas code, then use groups to answer
+questions about General Conference talks.
+
+- [Lecture slides](slides/pandas-questions.qmd)
+- [Student activity](activity/pandas-questions.qmd)
+- [Completed activity](activity/pandas-questions-complete.qmd)
+- [Download the student notebook](activity/pandas-questions.ipynb)
+- [Download the completed notebook](activity/pandas-questions-complete.ipynb)
+- [Download the talks data](data/talks.csv)
+- [Completed Python demonstration](src/pandas_demo.py)
+
+For each result, ask: **What does one row represent?**
+

@@ -1,0 +1,34 @@
+project:
+  type: website
+  output-dir: docs
+  execute-dir: file
+  render:
+    - index.qmd
+    - slides/pandas-questions.qmd
+    - activity/pandas-questions.qmd
+    - activity/pandas-questions-complete.qmd
+  resources:
+    - data/talks.csv
+    - activity/*.ipynb
+    - src/pandas_demo.py
+    - src/build_slide_outputs.py
+
+website:
+  title: "STAT 386: Answering questions with pandas"
+  navbar:
+    left:
+      - href: slides/pandas-questions.qmd
+        text: Slides
+      - href: activity/pandas-questions.qmd
+        text: Activity
+      - href: activity/pandas-questions-complete.qmd
+        text: Completed activity
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+
+execute:
+  freeze: false

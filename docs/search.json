@@ -1,0 +1,303 @@
+[
+  {
+    "objectID": "slides/pandas-questions.html#review-decode-this-pipeline",
+    "href": "slides/pandas-questions.html#review-decode-this-pipeline",
+    "title": "Answering questions with pandas",
+    "section": "Review: decode this pipeline",
+    "text": "Review: decode this pipeline\ntalks contains 794 rows. Each row represents one talk.\nanswer = (\n    talks.loc[\n        (talks[\"year\"] == 2020)\n        & (talks[\"session\"] == \"sunday-morning\"),\n        [\"talk_name\", \"speaker\", \"num_words\"]\n    ]\n    .sort_values(\"num_words\", ascending=False)\n    .head(3)\n)\nWith a partner: state the question this code answers.\nWhat does one output row represent? What changes if head(3) comes first?\n\nAllow 45 seconds individually and 60 seconds with a partner. Expected: three Sunday morning talks from 2020 with the largest word counts, showing title, speaker, and word count. Output rows still represent talks. Taking head first restricts the candidate rows before the comparison. Do not reveal the answer until pairs have a chance to respond."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#review-the-decoded-question",
+    "href": "slides/pandas-questions.html#review-the-decoded-question",
+    "title": "Answering questions with pandas",
+    "section": "Review: the decoded question",
+    "text": "Review: the decoded question\n\nFind the three Sunday morning talks from 2020 with the largest word counts. Show the title, speaker, and word count.\n\n\n\n\n\ntalk_name\nspeaker\nnum_words\n\n\n\n\nHear Him\nRussell M. Nelson\n2591\n\n\n�Let This House Be Built unto My Name�\nDavid A. Bednar\n1912\n\n\nLet God Prevail\nRussell M. Nelson\n1858\n\n\n\n\nFiltering and column selection come before ordering and taking three rows.\n\nImmediate review debrief. The computed result has shape (3, 3). Ask one pair to explain the two axes of loc and another to explain why sorting comes before head. Taking head first restricts the candidates before finding the largest counts. Allow about one minute."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#review-construct-a-pipeline",
+    "href": "slides/pandas-questions.html#review-construct-a-pipeline",
+    "title": "Answering questions with pandas",
+    "section": "Review: construct a pipeline",
+    "text": "Review: construct a pipeline\n\nFind the three Saturday morning talks from 2019 or 2020 with the largest word counts. Show the title, speaker, year, and word count.\n\nWrite the code with a partner. Use named steps or a method chain.\n\nWhich observations qualify?\nWhich columns belong in the result?\nWhat order should the operations follow?\nWhat is one useful result check?\n\n\nAllow two minutes. Students can write in checkpoint 0 of the starter activity or on paper before opening the repository. Listen for between, isin, or a correctly parenthesized OR. All are acceptable. Reuse the foundations vocabulary without another full explanation of loc/iloc."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#review-one-working-solution",
+    "href": "slides/pandas-questions.html#review-one-working-solution",
+    "title": "Answering questions with pandas",
+    "section": "Review: one working solution",
+    "text": "Review: one working solution\n\n\nmask = (\n    talks[\"year\"].between(2019, 2020)\n    & (talks[\"session\"] == \"saturday-morning\")\n)\nanswer = (\n    talks.loc[mask,\n              [\"talk_name\", \"speaker\", \"year\", \"num_words\"]]\n    .sort_values(\"num_words\", ascending=False)\n    .head(3)\n)\n\n\n\n\n\n\n\n\n\n\n\ntalk_name\nspeaker\nyear\nnum_words\n\n\n\n\nA Home Where the Spirit of the Lord Dwells\nHenry B. Eyring\n2019\n2247\n\n\nShall We Not Go On in So Great a Cause?\nM. Russell Ballard\n2020\n2234\n\n\nAnswers to Prayer\nBrook P. Hales\n2019\n2141\n\n\n\n\n\nCheck that every row qualifies and word counts decrease.\n\nImmediate construction debrief. The output contains three talks with the four requested columns. The largest values are across both allowed years, so sorting by year first would answer a different request. Named steps and method chains are both acceptable."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-question-about-groups",
+    "href": "slides/pandas-questions.html#a-question-about-groups",
+    "title": "Answering questions with pandas",
+    "section": "A question about groups",
+    "text": "A question about groups\n\nHow does typical talk length vary across session categories?\n\n\nWhat should one row of the answer represent?\n\nThe question determines the groups, the summary, and the comparison.\nWe need a definition of typical and the number of observations in each group.\n\nCollect a mean or median proposal and a result-unit proposal. Session categories recur across conferences, so one row represents a category, not a single conference session. This slide also supplies the roadmap: aggregation changes the result unit, transformation retains talk rows, and plotting displays the analysis. Keep framing to about two minutes."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-small-teaching-table",
+    "href": "slides/pandas-questions.html#a-small-teaching-table",
+    "title": "Answering questions with pandas",
+    "section": "A small teaching table",
+    "text": "A small teaching table\nThese six invented talks make the arithmetic easy to inspect.\n\n\ntoy = pd.DataFrame({\n    \"talk\": list(\"ABCDEF\"),\n    \"session\": [\"morning\"] * 3\n               + [\"afternoon\"] * 3,\n    \"num_words\": [1000, 2000, 3000,\n                  1000, 1200, 1400],\n})\n\n\n\n\n\ntalk\nsession\nnum_words\n\n\n\n\nA\nmorning\n1000\n\n\nB\nmorning\n2000\n\n\nC\nmorning\n3000\n\n\nD\nafternoon\n1000\n\n\nE\nafternoon\n1200\n\n\nF\nafternoon\n1400\n\n\n\n\n\n\nExplain that these are invented teaching data. The code and computed table appear together so students can reason without opening an editor. The same six observations recur in the GroupBy, filtering-order, and transformation examples."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#prediction-a-median-for-each-session",
+    "href": "slides/pandas-questions.html#prediction-a-median-for-each-session",
+    "title": "Answering questions with pandas",
+    "section": "Prediction: a median for each session",
+    "text": "Prediction: a median for each session\nUsing the six-talk table, sketch the answer to:\n\nWhat is the median word count in each session?\n\n\nHow many rows should the answer have?\nWhat should the columns contain?\nDoes the answer still identify talk C?\n\n\nFirst conceptual pause. Allow 45 seconds individually and 60 seconds with a partner. Expected: two rows, session and median_words. Morning median 2000, afternoon median 1200. Talk identities disappear during this aggregation. The next slide is the immediate debrief."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-summary-changes-what-a-row-represents",
+    "href": "slides/pandas-questions.html#a-summary-changes-what-a-row-represents",
+    "title": "Answering questions with pandas",
+    "section": "A summary changes what a row represents",
+    "text": "A summary changes what a row represents\ntoy_summary = toy.groupby(\"session\", as_index=False).agg(\n    median_words=(\"num_words\", \"median\")\n)\n\n\n\n\nsession\nmedian_words\n\n\n\n\nafternoon\n1200.0\n\n\nmorning\n2000.0\n\n\n\n\n\nSix talk rows become two session rows.\n\n\nImmediate prediction debrief. Group identity and medians remain, while individual talk identities disappear. as_index=False keeps the grouping variable in a regular column. The output comes from the teaching data generator."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#grouping-split-apply-combine",
+    "href": "slides/pandas-questions.html#grouping-split-apply-combine",
+    "title": "Answering questions with pandas",
+    "section": "Grouping: split, apply, combine",
+    "text": "Grouping: split, apply, combine\n\n\n\nStep\nIn this example\n\n\n\n\nSplit\nAssociate each talk row with its session\n\n\nApply\nCalculate a median from each group’s values\n\n\nCombine\nLabel each result with its session\n\n\n\ntoy.groupby(\"session\")[\"num_words\"].median()\n\n\n\n\nsession\nmedian_words\n\n\n\n\nafternoon\n1200.0\n\n\nmorning\n2000.0\n\n\n\n\n\nConnect each step to the six-talk table. The displayed table presents the two labeled values returned by the Series. The term apply names the conceptual calculation step, not a requirement to call .apply(). Source: https://pandas.pydata.org/docs/user_guide/groupby.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#inside-a-groupby-object",
+    "href": "slides/pandas-questions.html#inside-a-groupby-object",
+    "title": "Answering questions with pandas",
+    "section": "Inside a GroupBy object",
+    "text": "Inside a GroupBy object\n\n\ngrouped = toy.groupby(\"session\")\nprint(type(grouped).__name__, grouped.ngroups)\ngrouped.indices\nThe object keeps the source data and the grouping instructions.\nGroup membership links a key to row positions.\n\nDataFrameGroupBy 2\n{'afternoon': array([3, 4, 5]), 'morning': array([0, 1, 2])}\nafternoon: positions 3, 4, 5\nmorning: positions 0, 1, 2\n\nGrouping work happens when an inspection or calculation needs it.\n\nSpend about two minutes on mechanics. Calling groupby validates the grouping specification and returns a GroupBy rather than a completed summary. pandas defers splitting work until it is needed. Accessing ngroups or indices requests grouping metadata and can trigger that work. indices maps group keys to positions, not index labels in the general case. Do not describe this as immediately copying each group into an independent DataFrame. Exact internal caches vary by pandas version. Source: https://pandas.pydata.org/docs/user_guide/groupby.html and https://pandas.pydata.org/docs/reference/api/pandas.api.typing.DataFrameGroupBy.indices.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#inspecting-and-using-a-groupby",
+    "href": "slides/pandas-questions.html#inspecting-and-using-a-groupby",
+    "title": "Answering questions with pandas",
+    "section": "Inspecting and using a GroupBy",
+    "text": "Inspecting and using a GroupBy\n\n\ngrouped.get_group(\"morning\")\n\n\n\n\n\ntalk\nsession\nnum_words\n\n\n\n\nA\nmorning\n1000\n\n\nB\nmorning\n2000\n\n\nC\nmorning\n3000\n\n\n\n\n\n\n\ngrouped[\"num_words\"].median()\ngrouped[\"num_words\"].mean()\ngrouped.size()\n\n\n\n\n\nsession\nmedian\nmean\nsize\n\n\n\n\nafternoon\n1200.0\n1200.0\n3\n\n\nmorning\n2000.0\n2000.0\n3\n\n\n\n\n\ngrouped.obj is toy returns True. The original table still has six rows.\n\nExtracting a group makes its membership visible. The lower table places the three separately returned Series side by side to compare their results. Selecting num_words chooses values to work with; the reduction computes one answer per group. Built-in reductions use the group memberships and underlying values without requiring an explicit Python loop over rows. These inspection methods are for intuition, not a requirement to iterate through groups. get_group does not remove rows from the source table. Source: https://pandas.pydata.org/docs/reference/api/pandas.api.typing.DataFrameGroupBy.get_group.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#overall-and-grouped-summaries",
+    "href": "slides/pandas-questions.html#overall-and-grouped-summaries",
+    "title": "Answering questions with pandas",
+    "section": "Overall and grouped summaries",
+    "text": "Overall and grouped summaries\n\n\ntalks[\"num_words\"].median()\nOne median across all recorded talks.\n1690.0\n\ntalks.groupby(\"session\")[\"num_words\"].median()\nOne median for each session category.\n\n\n\n\nsession\nmedian_words\n\n\n\n\npriesthood\n1876.0\n\n\nrelief-society\n2000.5\n\n\nsaturday-afternoon\n1703.0\n\n\nsaturday-evening\n1765.0\n\n\nsaturday-morning\n1680.0\n\n\nsunday-afternoon\n1569.5\n\n\nsunday-morning\n1739.0\n\n\nwomens\n1571.0\n\n\nyoung-women\n1914.5\n\n\n\n\n\n\nWhat reference group does each answer use?\n\n\nPreserve the original overall-versus-grouped example and the reference-group question. Students already know an overall reduction. A talk may exceed the overall median while falling below its own session median. The group table displays all nine labeled median values."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#counts-and-proportions",
+    "href": "slides/pandas-questions.html#counts-and-proportions",
+    "title": "Answering questions with pandas",
+    "section": "Counts and proportions",
+    "text": "Counts and proportions\n\n\ntalks[\"session\"].value_counts()\n\ntalks[\"session\"].value_counts(\n    normalize=True\n)\nCount talks, then divide by the number of nonmissing session labels.\n\n\n\n\n\nsession\ncount\nproportion\n\n\n\n\nsunday-afternoon\n170\n0.214\n\n\nsaturday-morning\n151\n0.19\n\n\nsaturday-afternoon\n141\n0.178\n\n\nsunday-morning\n139\n0.175\n\n\npriesthood\n104\n0.131\n\n\nwomens\n50\n0.063\n\n\nrelief-society\n16\n0.02\n\n\nyoung-women\n16\n0.02\n\n\nsaturday-evening\n7\n0.009\n\n\n\n\n\nHere every session label is present, so the denominator is 794 talks.\n\nThe output table places the separately returned count and proportion Series together, with proportions rounded to three decimals for display. The fractions describe talks, not unique speakers. Counts sum to 794; the displayed rounded proportions need not sum to exactly one. Source: https://pandas.pydata.org/docs/reference/api/pandas.Series.value_counts.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-filter-changes-the-denominator",
+    "href": "slides/pandas-questions.html#a-filter-changes-the-denominator",
+    "title": "Answering questions with pandas",
+    "section": "A filter changes the denominator",
+    "text": "A filter changes the denominator\n\n\nrecent = talks.loc[\n    talks[\"year\"].between(2018, 2020)\n].copy()\n\nrecent[\"session\"].value_counts(\n    normalize=True\n)\nThe reference contains 201 recent talks.\n\n\n\n\n\nsession\nproportion\n\n\n\n\nsunday-afternoon\n0.229\n\n\nsaturday-morning\n0.204\n\n\nsaturday-afternoon\n0.194\n\n\nsunday-morning\n0.184\n\n\nwomens\n0.09\n\n\npriesthood\n0.065\n\n\nsaturday-evening\n0.035\n\n\n\n\n\n\nIf we filter to Sunday morning before counting, what proportion belongs to Sunday morning?\n\n\nKeep the denominator question as a quick verbal interaction. Expected one, because every remaining talk is Sunday morning. The output displays all seven recent categories. Fractions round to three decimals. Filtering changes the observations that contribute to a calculation."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#counting-rows-and-recorded-values",
+    "href": "slides/pandas-questions.html#counting-rows-and-recorded-values",
+    "title": "Answering questions with pandas",
+    "section": "Counting rows and recorded values",
+    "text": "Counting rows and recorded values\n\n\ntalks.groupby(\"session\").size()\n\ntalks.groupby(\"session\")[\"runtime\"].count()\nsize() counts talk rows.\ncount() counts recorded values.\n\n\n\n\n\nsession\nn_talks\nn_recorded_runtimes\n\n\n\n\npriesthood\n104\n92\n\n\nrelief-society\n16\n14\n\n\nsaturday-afternoon\n141\n114\n\n\nsaturday-evening\n7\n6\n\n\nsaturday-morning\n151\n131\n\n\nsunday-afternoon\n170\n139\n\n\nsunday-morning\n139\n114\n\n\nwomens\n50\n41\n\n\nyoung-women\n16\n12\n\n\n\n\n\nAcross the whole table: 794 talks, 663 recorded runtimes.\n\nThe two returned Series appear side by side in the output table. There are 131 missing runtimes. No runtime parsing or repair is required. Count rows with size when the request asks how many observations there are. Session keys are complete; missing group keys would be excluded by default. Source: https://pandas.pydata.org/docs/user_guide/groupby.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#several-summaries-in-one-table",
+    "href": "slides/pandas-questions.html#several-summaries-in-one-table",
+    "title": "Answering questions with pandas",
+    "section": "Several summaries in one table",
+    "text": "Several summaries in one table\nsession_summary = (\n    talks.groupby(\"session\", as_index=False)\n    .agg(\n        n_talks=(\"num_words\", \"size\"),\n        mean_words=(\"num_words\", \"mean\"),\n        median_words=(\"num_words\", \"median\"),\n    )\n    .sort_values(\"median_words\", ascending=False)\n)\nEach named output specifies an input column and a summary operation.\n\n(9, 4)\n\nas_index=False keeps session as a column. The next slide displays all nine rows.\n\nRead one named aggregation aloud: create median_words by taking the median of num_words. size counts rows even if the selected value is missing. as_index=False keeps session as an ordinary column. The output names belong to the analyst, not the source data. Source: https://pandas.pydata.org/docs/user_guide/groupby.html#named-aggregation"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#session-summaries-in-the-talks-data",
+    "href": "slides/pandas-questions.html#session-summaries-in-the-talks-data",
+    "title": "Answering questions with pandas",
+    "section": "Session summaries in the talks data",
+    "text": "Session summaries in the talks data\n\n\n\n\nsession\nn_talks\nmean_words\nmedian_words\n\n\n\n\nrelief-society\n16\n2035.2\n2000.5\n\n\nyoung-women\n16\n2020.6\n1914.5\n\n\npriesthood\n104\n1852.5\n1876.0\n\n\nsaturday-evening\n7\n1568.4\n1765.0\n\n\nsunday-morning\n139\n1741.2\n1739.0\n\n\nsaturday-afternoon\n141\n1689.7\n1703.0\n\n\nsaturday-morning\n151\n1663.4\n1680.0\n\n\nwomens\n50\n1658.6\n1571.0\n\n\nsunday-afternoon\n170\n1549.7\n1569.5\n\n\n\n\nCounts describe how much data each median uses. Total words also depend on how many talks a category contains.\n\nWould ranking total words answer the same question as ranking median words?\n\n\nThis generated table replaces the manually typed results. Means display one decimal place. Ask whether ranking totals would answer the same question as ranking median length. It would not. Groups differ in number of observations, historical coverage, and speakers. This incorporates the earlier separate group-size discussion without removing its question."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#more-than-one-grouping-variable",
+    "href": "slides/pandas-questions.html#more-than-one-grouping-variable",
+    "title": "Answering questions with pandas",
+    "section": "More than one grouping variable",
+    "text": "More than one grouping variable\n\n\nyear_session = (\n    talks.groupby(\n        [\"year\", \"session\"], as_index=False\n    )\n    .agg(n_talks=(\"num_words\", \"size\"),\n         median_words=(\"num_words\", \"median\"))\n)\nyear_session.head(4)\n\n\n\n\n\nyear\nsession\nn_talks\nmedian_words\n\n\n\n\n2010\npriesthood\n12\n2073.0\n\n\n2010\nrelief-society\n4\n2030.5\n\n\n2010\nsaturday-afternoon\n13\n1853.0\n\n\n2010\nsaturday-morning\n14\n1483.0\n\n\n\n\nFull result shape:\n(70, 4)\n\nOne row represents an observed year-session combination. Does every possible combination have to appear?\n\nKeep the two-key example and its prediction. The display is explicitly the first four rows, not the whole result. With ordinary text keys, groups arise from observed combinations. No rectangular grid is guaranteed. Avoid pivots or MultiIndex machinery today."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#prediction-filtering-order",
+    "href": "slides/pandas-questions.html#prediction-filtering-order",
+    "title": "Answering questions with pandas",
+    "section": "Prediction: filtering order",
+    "text": "Prediction: filtering order\nUsing the six invented talks, compare:\nA. Keep talks with at least 1,500 words, then calculate session medians.\nB. Calculate session medians from all six talks, then keep sessions whose median is at least 1,500 words.\n\nWhat morning median does each analysis report? Which talks contribute?\n\n\nSecond conceptual pause. Give pairs 90 seconds. A uses only morning B and C, median 2500. B uses morning A, B, and C, median 2000. Afternoon disappears in both results for different reasons. Immediate answer follows."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#the-filter-changes-the-question",
+    "href": "slides/pandas-questions.html#the-filter-changes-the-question",
+    "title": "Answering questions with pandas",
+    "section": "The filter changes the question",
+    "text": "The filter changes the question\n\n\nA. Filter talk rows first\nlong_toy = toy.loc[toy[\"num_words\"] &gt;= 1500]\nlong_toy.groupby(\"session\", as_index=False).agg(\n    median_words=(\"num_words\", \"median\")\n)\n\n\n\n\nsession\nmedian_words\n\n\n\n\nmorning\n2500.0\n\n\n\n\n\nB. Summarize first\ntoy_summary.loc[\n    toy_summary[\"median_words\"] &gt;= 1500\n]\n\n\n\n\nsession\nmedian_words\n\n\n\n\nmorning\n2000.0\n\n\n\n\n\nA uses talks B and C. B uses talks A, B, and C to calculate its median.\n\nImmediate debrief after the pair prediction. Both analyses keep only morning, but report 2500 and 2000 because the reference observations differ. Filtering observations changes the statistic. Filtering the summary selects groups. Both can be valid for their own question."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#prediction-a-group-reference-for-every-row",
+    "href": "slides/pandas-questions.html#prediction-a-group-reference-for-every-row",
+    "title": "Answering questions with pandas",
+    "section": "Prediction: a group reference for every row",
+    "text": "Prediction: a group reference for every row\n\nWhich talks are longer than the median talk in their own session?\n\nFill in the reference beside each talk before writing code.\n\n\n\ntalk\nsession\nnum_words\nsession_median_words\n\n\n\n\nA\nmorning\n1000\n?\n\n\nB\nmorning\n2000\n?\n\n\nC\nmorning\n3000\n?\n\n\nD\nafternoon\n1000\n?\n\n\nE\nafternoon\n1200\n?\n\n\nF\nafternoon\n1400\n?\n\n\n\n\nAllow 45 seconds, then ask a pair to explain the repeated values. The median for the row’s session should appear beside each row. Return immediately with the filled table."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#transformation-preserves-talk-rows",
+    "href": "slides/pandas-questions.html#transformation-preserves-talk-rows",
+    "title": "Answering questions with pandas",
+    "section": "Transformation preserves talk rows",
+    "text": "Transformation preserves talk rows\ntoy[\"session_median_words\"] = (\n    toy.groupby(\"session\")[\"num_words\"].transform(\"median\")\n)\n\n\n\n\ntalk\nsession\nnum_words\nsession_median_words\n\n\n\n\nA\nmorning\n1000\n2000.0\n\n\nB\nmorning\n2000\n2000.0\n\n\nC\nmorning\n3000\n2000.0\n\n\nD\nafternoon\n1000\n1200.0\n\n\nE\nafternoon\n1200\n1200.0\n\n\nF\nafternoon\n1400\n1200.0\n\n\n\n\n\nImmediate answer after the six-row prediction. Six values retain the original talk-row index. Group medians repeat beside their members. Ask which talks exceed the reference: C and F. Source: https://pandas.pydata.org/docs/user_guide/groupby.html#transformation"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#aggregation-and-transformation",
+    "href": "slides/pandas-questions.html#aggregation-and-transformation",
+    "title": "Answering questions with pandas",
+    "section": "Aggregation and transformation",
+    "text": "Aggregation and transformation\n\n\n\n\n\n\n\n\nQuestion\nOperation\nResult unit\n\n\n\n\nWhat is each session’s median?\n.agg() or .median()\nOne row per session\n\n\nWhat is this talk’s session median?\n.transform(\"median\")\nOne value per talk\n\n\n\nFor the real dataset:\n\nAggregation: 794 talk rows become 9 session rows.\nTransformation: 794 talk rows receive 794 aligned reference values.\n\n\nA short summary of the conceptual distinction. The next code block should now feel motivated. Do not define transform merely as another method to memorize. Source: https://pandas.pydata.org/docs/user_guide/groupby.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-comparison-within-each-session",
+    "href": "slides/pandas-questions.html#a-comparison-within-each-session",
+    "title": "Answering questions with pandas",
+    "section": "A comparison within each session",
+    "text": "A comparison within each session\n\n\ntalks[\"session_median_words\"] = (\n    talks.groupby(\"session\")[\"num_words\"]\n    .transform(\"median\")\n)\ntalks[\"above_session_median\"] = (\n    talks[\"num_words\"]\n    &gt; talks[\"session_median_words\"]\n)\nabove = talks.loc[\n    talks[\"above_session_median\"]\n]\n\n\n\n\n\nsession\nnum_words\nsession_median_words\nabove_session_median\n\n\n\n\nsaturday-afternoon\n1514\n1703.0\nFalse\n\n\nsunday-afternoon\n1492\n1569.5\nFalse\n\n\nsunday-afternoon\n1579\n1569.5\nTrue\n\n\nsaturday-afternoon\n1587\n1703.0\nFalse\n\n\n\n\nFour example rows from the transformed table.\n395\nTalks qualify across all recorded years.\n\n\nThe four displayed rows are a labeled example excerpt, chosen to include True and False outcomes. They correspond to original positions 0, 2, 10, and 12. The final filtering uses the familiar Boolean mask. Strict greater-than excludes ties, so exactly half need not qualify. Every reference here uses the full time window."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#labels-explain-why-transform-helps",
+    "href": "slides/pandas-questions.html#labels-explain-why-transform-helps",
+    "title": "Answering questions with pandas",
+    "section": "Labels explain why transform helps",
+    "text": "Labels explain why transform helps\nmedians = talks.groupby(\"session\")[\"num_words\"].median()\nreference = talks.groupby(\"session\")[\"num_words\"].transform(\"median\")\nmedians.index[:2]  = ['priesthood', 'relief-society']\nreference.index[:2] = [0, 1]\nmedians has session labels. reference has talk-row labels.\nColumn assignment aligns index labels. Transformation provides the labels needed for the talk table.\n\nRelate this to the Ana/Bo bonus alignment example in foundations. The printed first two labels make the mismatch visible. Directly assigning the group-indexed Series would align session strings with integer row labels and introduce missing values here. Do not require a join for this task."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#the-reference-group-includes-the-time-window",
+    "href": "slides/pandas-questions.html#the-reference-group-includes-the-time-window",
+    "title": "Answering questions with pandas",
+    "section": "The reference group includes the time window",
+    "text": "The reference group includes the time window\n\n\nrecent = talks.loc[\n    talks[\"year\"].between(2018, 2020)\n].copy()\nrecent[\"session_median_words\"] = (\n    recent.groupby(\"session\")[\"num_words\"]\n    .transform(\"median\")\n)\n\n\n\n\n\nsession\nnum_words\nsession_median_words\n\n\n\n\nsaturday-afternoon\n1514\n1629.0\n\n\nsaturday-afternoon\n1500\n1629.0\n\n\nsunday-afternoon\n1492\n1621.0\n\n\n\n\nFirst three recent talk rows.\n\n\nHow would the comparison change if we calculated the reference before filtering years?\n\n\nKeep the reference-window interaction. The reference values use only 2018-2020 observations. Before filtering years, the reference would use all recorded years. The final task requires the recent reference. The displayed table is an excerpt of a 201-row transformed result."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#dates-provide-time-variables",
+    "href": "slides/pandas-questions.html#dates-provide-time-variables",
+    "title": "Answering questions with pandas",
+    "section": "Dates provide time variables",
+    "text": "Dates provide time variables\nThe CSV stores dates as text, such as 2020-10-03 00:00:00.000.\ntalks[\"date\"] = pd.to_datetime(\n    talks[\"date\"], format=\"%Y-%m-%d %H:%M:%S.%f\"\n)\ntalks[\"talk_year\"] = talks[\"date\"].dt.year\ntalks[\"talk_month\"] = talks[\"date\"].dt.month\n\n\n\n\ndate\ntalk_year\ntalk_month\n\n\n\n\n2020-10-03\n2020\n10\n\n\n2020-10-03\n2020\n10\n\n\n2020-10-04\n2020\n10\n\n\n\n\nFirst three rows. .dt extracts components from the datetime Series.\n\nThe displayed dates omit midnight times for readability but the underlying converted values are datetimes. Date format tokens represent year, month, day, hour, minute, second, and fractional second. Derived years match the provided year column. Do not invent conference dates or add coercion by default. Source: https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-yearly-summary",
+    "href": "slides/pandas-questions.html#a-yearly-summary",
+    "title": "Answering questions with pandas",
+    "section": "A yearly summary",
+    "text": "A yearly summary\n\n\nannual = (\n    talks.groupby(\"talk_year\", as_index=False)\n    .agg(n_talks=(\"num_words\", \"size\"),\n         median_words=(\"num_words\", \"median\"))\n    .sort_values(\"talk_year\")\n)\nOne row represents one year of recorded talks.\n\n\n\n\n\ntalk_year\nn_talks\nmedian_words\n\n\n\n\n2010\n75\n1853.0\n\n\n2011\n75\n1844.0\n\n\n2012\n75\n1768.0\n\n\n2013\n75\n1711.0\n\n\n2014\n75\n1651.0\n\n\n2015\n75\n1630.0\n\n\n2016\n72\n1684.5\n\n\n2017\n71\n1722.0\n\n\n2018\n69\n1650.0\n\n\n2019\n65\n1652.0\n\n\n2020\n67\n1629.0\n\n\n\n\n\n\nShow all eleven years. Chronological order uses the numeric year rather than alphabetic conference text. Each point in the later line plot comes from one row here. Membership of the collection can differ across years. No resampling or time-series index is needed."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-bar-chart-of-group-medians",
+    "href": "slides/pandas-questions.html#a-bar-chart-of-group-medians",
+    "title": "Answering questions with pandas",
+    "section": "A bar chart of group medians",
+    "text": "A bar chart of group medians\n\n\nimport matplotlib.pyplot as plt\n\nordered = session_summary.sort_values(\n    \"median_words\"\n)\nax = ordered.plot.barh(\n    x=\"session\", y=\"median_words\",\n    legend=False, figsize=(10, 5.5)\n)\nax.set_xlabel(\"Median word count\")\nax.set_ylabel(\"Session\")\nax.set_title(\"Typical talk length by session\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n.plot.barh() returns a Matplotlib Axes. Ascending order places the largest horizontal bar at the top.\n\nThis single code-and-figure slide combines the earlier plotting introduction, output slide, and formatting slide. The plotted values are generated from the same summary table. Matplotlib must be installed. The script sets cosmetic fonts and colors for presentation, while the shown commands supply the data, order, labels, and title. One bar represents one category. Preserve the question about what the bar represents. Source: https://pandas.pydata.org/docs/user_guide/visualization.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-bar-chart-can-display-counts",
+    "href": "slides/pandas-questions.html#a-bar-chart-can-display-counts",
+    "title": "Answering questions with pandas",
+    "section": "A bar chart can display counts",
+    "text": "A bar chart can display counts\ntalks[\"session\"].value_counts().sort_values().plot.barh()\nplt.show()\n\n\n\n\nThis is a Series plot, so its index supplies category labels. Ask why the ranking differs from the median chart. A count measures frequency, a median measures typical length. The plotted version in the script adds axis labels, a title, and a larger figure size. Source: https://pandas.pydata.org/docs/user_guide/visualization.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-line-chart-over-time",
+    "href": "slides/pandas-questions.html#a-line-chart-over-time",
+    "title": "Answering questions with pandas",
+    "section": "A line chart over time",
+    "text": "A line chart over time\nannual.plot.line(\n    x=\"talk_year\", y=\"median_words\", marker=\"o\", legend=False\n)\nplt.show()\n\n\n\n\nChronological order makes a line meaningful. A plotted point summarizes one year’s recorded talks. Ask whether the graph follows the same talk or speaker over time. No. The membership of each year’s collection can change. Source: https://pandas.pydata.org/docs/user_guide/visualization.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#a-histogram-of-individual-talk-lengths",
+    "href": "slides/pandas-questions.html#a-histogram-of-individual-talk-lengths",
+    "title": "Answering questions with pandas",
+    "section": "A histogram of individual talk lengths",
+    "text": "A histogram of individual talk lengths\ntalks[\"num_words\"].plot.hist(bins=20)\nplt.show()\n\n\n\n\nA histogram uses individual numeric values, while a categorical bar chart uses values attached to named groups. A histogram bar counts observations in a numeric interval. Changing bins changes the display, not the observations. Source: https://pandas.pydata.org/docs/user_guide/visualization.html"
+  },
+  {
+    "objectID": "slides/pandas-questions.html#plot-choice-follows-the-question",
+    "href": "slides/pandas-questions.html#plot-choice-follows-the-question",
+    "title": "Answering questions with pandas",
+    "section": "Plot choice follows the question",
+    "text": "Plot choice follows the question\n\n\n\n\n\n\n\n\nQuestion\nStarting table\npandas method\n\n\n\n\nHow do session medians compare?\nGroup summary\n.plot.barh()\n\n\nHow do yearly medians change?\nChronological summary\n.plot.line()\n\n\nHow are individual word counts distributed?\nTalk-level Series\n.plot.hist()\n\n\n\n\nWhat does one bar or point represent in each display?\n\n\nQuick plotting debrief. Students should explain unit and axis meaning before adding colors. This table is a reference they can use during the activity. Do not expand into a full visualization lecture."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#the-worksheet-and-pair-activity",
+    "href": "slides/pandas-questions.html#the-worksheet-and-pair-activity",
+    "title": "Answering questions with pandas",
+    "section": "The worksheet and pair activity",
+    "text": "The worksheet and pair activity\nThe slide examples already include their results. You can follow the analysis here.\nFor the pair activity, open checkpoint 6 in:\n\nactivity/pandas-questions.qmd, or\nactivity/pandas-questions.ipynb\n\nUse the project’s .venv interpreter. Earlier checkpoints remain available for practice and recovery.\n\nArrange download, fork/clone, and uv sync before class or during arrival. Do not switch between slide presentation and live code for every example. Make one switch when students begin independent pair work. Checkpoints 0-5 remain in the worksheets with every original example; checkpoint 1 now includes GroupBy inspection. Give the main activity time to checkpoint 6 rather than repeating the entire guided worksheet in class."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#the-final-request",
+    "href": "slides/pandas-questions.html#the-final-request",
+    "title": "Answering questions with pandas",
+    "section": "The final request",
+    "text": "The final request\n\nFor recorded talks from 2018 through 2020, compare median word counts across session categories. Report counts and retain categories with at least ten talks. Order the result by median word count and make a bar chart.\n\nThen identify talks in those categories that exceed their own session’s median among the 2018-2020 talks.\nWrite one sentence interpreting the summary and one limitation.\n\nAllow about 12 minutes for the final request, with brief progress pauses. The ten-talk condition is part of the request and is not a promise of statistical reliability. Use the recent time window for both the aggregate and the transformed reference. Above-median results should include only the qualifying categories."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#the-analysis-decisions",
+    "href": "slides/pandas-questions.html#the-analysis-decisions",
+    "title": "Answering questions with pandas",
+    "section": "The analysis decisions",
+    "text": "The analysis decisions\nBefore coding, explain:\n\nWhich rows define the reference data?\nWhat variables define a group?\nWhich condition applies to talk rows?\nWhich condition applies to summary rows?\nHow will group information return to individual talks?\n\n\nGive pairs one minute of the activity time for this plan. Expected: filter year first, group by session, aggregate n_talks and median_words, filter group counts after aggregation, sort the summary, transform medians on recent talks, use a mask that combines eligible-session membership and above-median status."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#debrief-the-session-summary",
+    "href": "slides/pandas-questions.html#debrief-the-session-summary",
+    "title": "Answering questions with pandas",
+    "section": "Debrief: the session summary",
+    "text": "Debrief: the session summary\nrecent = talks.loc[talks[\"year\"].between(2018, 2020)].copy()\n\nsummary = (\n    recent.groupby(\"session\", as_index=False)\n    .agg(n_talks=(\"num_words\", \"size\"),\n         median_words=(\"num_words\", \"median\"))\n)\n\neligible = (\n    summary.loc[summary[\"n_talks\"] &gt;= 10]\n    .sort_values(\"median_words\", ascending=False)\n)\n\nImmediate activity debrief begins after students attempt the task. Have a pair explain each filter’s location before showing the code. The first filter changes which observations contribute to the statistics. The second filter selects categories using their observed group size."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#debrief-the-completed-summary",
+    "href": "slides/pandas-questions.html#debrief-the-completed-summary",
+    "title": "Answering questions with pandas",
+    "section": "Debrief: the completed summary",
+    "text": "Debrief: the completed summary\n\n\n\n\nsession\nn_talks\nmedian_words\n\n\n\n\nsunday-morning\n37\n1790.0\n\n\nsaturday-morning\n41\n1728.0\n\n\nsaturday-afternoon\n39\n1629.0\n\n\nsunday-afternoon\n46\n1621.0\n\n\npriesthood\n13\n1554.0\n\n\nwomens\n18\n1480.5\n\n\n\n\n201 recent talk rows become 6 qualifying session rows.\nThe retained counts sum to 194. Seven Saturday evening talks belong to a category below the requested threshold.\n\nKeep the full activity debrief. Counts before group filtering sum to 201. After filtering categories, counts sum to 194. This is expected. The ten-talk threshold is a task condition rather than a reliability guarantee. Results come from the completed analysis."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#debrief-a-plot-of-the-answer",
+    "href": "slides/pandas-questions.html#debrief-a-plot-of-the-answer",
+    "title": "Answering questions with pandas",
+    "section": "Debrief: a plot of the answer",
+    "text": "Debrief: a plot of the answer\n\n\n\n\nAsk a pair to read one bar in a sentence that includes the time window, statistic, and observational unit. Example: among recorded 2018-2020 Sunday morning talks, the median word count is 1790. Different categories have different counts and may contain different speakers and conference compositions."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#debrief-individual-talks-with-a-group-reference",
+    "href": "slides/pandas-questions.html#debrief-individual-talks-with-a-group-reference",
+    "title": "Answering questions with pandas",
+    "section": "Debrief: individual talks with a group reference",
+    "text": "Debrief: individual talks with a group reference\nrecent[\"session_median_words\"] = (\n    recent.groupby(\"session\")[\"num_words\"].transform(\"median\")\n)\nmask = (\n    recent[\"session\"].isin(eligible[\"session\"])\n    & (recent[\"num_words\"] &gt; recent[\"session_median_words\"])\n)\nabove = recent.loc[mask]\n\n\n\n\ntalk_name\nsession\nnum_words\nsession_median_words\n\n\n\n\nAnswers to Prayer\nsaturday-morning\n2141\n1728.0\n\n\nDivine Discontent\nwomens\n1631\n1480.5\n\n\nWilt Thou Be Made Whole?\nsunday-afternoon\n1639\n1621.0\n\n\n\n\nFirst three qualifying talks. The complete result contains 95 talks.\n\nPreserve the talk-level debrief and show a real excerpt beside the reference. The transformed intermediate contains 201 rows. The strict comparison in eligible categories yields 95 talks. Ties and odd group sizes mean exactly half need not qualify. The output shows session and reference so students can visibly check the comparison."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#interpretation-and-limits",
+    "href": "slides/pandas-questions.html#interpretation-and-limits",
+    "title": "Answering questions with pandas",
+    "section": "Interpretation and limits",
+    "text": "Interpretation and limits\n\nAmong categories with at least ten recorded talks from 2018 through 2020, Sunday morning has the largest median word count, at 1,790 words.\n\nThis describes the supplied talks. It does not establish that the session itself causes longer talks.\n\nWhat information would you need before making a broader claim?\n\n\nExpected: completeness and selection of talks, speaker composition, changes in conference/session formats, and a clear target population. Keep this to descriptive reasoning rather than formal causal methods. The counts-and-reference habit should transfer to later wrangling lessons."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#exit-check",
+    "href": "slides/pandas-questions.html#exit-check",
+    "title": "Answering questions with pandas",
+    "section": "Exit check",
+    "text": "Exit check\nFor each request, choose the operation and state the result unit.\n\nReport the number of talks and median word count for each speaker.\nAdd each speaker’s median word count beside every talk they gave.\nCompare the median word count across years in a figure.\nKeep only speakers with at least five recorded talks.\n\n\nGive students one minute. Expected: groupby speaker with agg gives speaker rows; groupby speaker with transform gives talk rows; a chronologically sorted yearly summary with plot.line gives yearly points; filtering n_talks after aggregation gives qualifying speaker rows. The final slide is the immediate answer."
+  },
+  {
+    "objectID": "slides/pandas-questions.html#exit-check-the-reasoning",
+    "href": "slides/pandas-questions.html#exit-check-the-reasoning",
+    "title": "Answering questions with pandas",
+    "section": "Exit check: the reasoning",
+    "text": "Exit check: the reasoning\n\n\n\n\n\n\n\n\nRequest\nOperation\nResult unit\n\n\n\n\nCount and median for each speaker\ngroupby(\"speaker\").agg(...)\nSpeaker\n\n\nSpeaker median beside every talk\n.transform(\"median\")\nTalk\n\n\nMedian length across years\nYearly aggregation and .plot.line()\nYear\n\n\nSpeakers with at least five talks\nFilter the group summary\nSpeaker\n\n\n\n\nA clear pandas analysis keeps the question, the reference data, and the meaning of each row connected.\n\n\nEnd with the habit rather than a catalog of methods. The next wrangling lessons will change table structure and combine tables, making the meaning of a row even more important. No joins, pivots, or missingness theory are required to answer today’s questions."
+  }
+]

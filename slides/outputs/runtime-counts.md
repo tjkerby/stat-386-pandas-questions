@@ -1,0 +1,11 @@
+| session | n_talks | n_recorded_runtimes |
+| :-- | --: | --: |
+| priesthood | 104 | 92 |
+| relief-society | 16 | 14 |
+| saturday-afternoon | 141 | 114 |
+| saturday-evening | 7 | 6 |
+| saturday-morning | 151 | 131 |
+| sunday-afternoon | 170 | 139 |
+| sunday-morning | 139 | 114 |
+| womens | 50 | 41 |
+| young-women | 16 | 12 |

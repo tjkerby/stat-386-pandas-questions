@@ -1,0 +1,1913 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Answering questions with pandas: Completed activity</title><link rel="stylesheet" href="../site_libs/site.css"></head><body><nav><a href="../index.html">STAT 386</a><a href="../slides/pandas-questions.html">Slides</a><a href="../activity/pandas-questions.html">Activity</a><a href="../activity/pandas-questions-complete.html">Completed activity</a></nav><main><h1>Answering questions with pandas: Completed activity</h1><h2 id="purpose-and-setup">Purpose and setup</h2>
+<p>Read and write pandas pipelines, summarize groups, attach group references to talks, and make plots. Equivalent code can be correct when it answers the same question. Every claim below describes the supplied dataset.</p>
+<p>Run this file from its own directory in Positron. The relative path reflects the file’s location inside <code>activity/</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>talks <span class="op">=</span> pd.read_csv(<span class="st">&quot;../data/talks.csv&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>talks.shape</span></code></pre></div>
+<pre class="text"><code>794</code></pre>
+<pre class="text"><code>14</code></pre>
+<p>One row represents one talk. The initial shape is <code>(794, 14)</code>.</p>
+<h2 id="checkpoint-0-review-familiar-pipelines">Checkpoint 0: Review familiar pipelines</h2>
+<h3 id="decode-the-code">Decode the code</h3>
+<p>Before running, describe the question this code answers. Predict its type and shape, and explain why sorting precedes <code>head(3)</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>decoded <span class="op">=</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    talks.loc[</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        (talks[<span class="st">&quot;year&quot;</span>] <span class="op">==</span> <span class="dv">2020</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;</span> (talks[<span class="st">&quot;session&quot;</span>] <span class="op">==</span> <span class="st">&quot;sunday-morning&quot;</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;talk_name&quot;</span>, <span class="st">&quot;speaker&quot;</span>, <span class="st">&quot;num_words&quot;</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">&quot;num_words&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    .head(<span class="dv">3</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>decoded</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk_name
+</th>
+<th>
+speaker
+</th>
+<th>
+num_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+727
+</th>
+<td>
+Hear Him
+</td>
+<td>
+Russell M. Nelson
+</td>
+<td>
+2591
+</td>
+</tr>
+<tr>
+<th>
+497
+</th>
+<td>
+“Let This House Be Built unto My Name”
+</td>
+<td>
+David A. Bednar
+</td>
+<td>
+1912
+</td>
+</tr>
+<tr>
+<th>
+739
+</th>
+<td>
+Let God Prevail
+</td>
+<td>
+Russell M. Nelson
+</td>
+<td>
+1858
+</td>
+</tr>
+</tbody>
+</table>
+<p>The result is a three-row, three-column DataFrame containing the three Sunday morning talks from 2020 with the largest word counts. Taking <code>head(3)</code> before sorting would restrict the candidates before finding the largest counts.</p>
+<h3 id="construct-the-code">Construct the code</h3>
+<p>Find the three Saturday morning talks from 2019 or 2020 with the largest word counts. Show the title, speaker, year, and word count.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>review_mask <span class="op">=</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    talks[<span class="st">&quot;year&quot;</span>].between(<span class="dv">2019</span>, <span class="dv">2020</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span> (talks[<span class="st">&quot;session&quot;</span>] <span class="op">==</span> <span class="st">&quot;saturday-morning&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>review_answer <span class="op">=</span> (</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    talks.loc[review_mask, [<span class="st">&quot;talk_name&quot;</span>, <span class="st">&quot;speaker&quot;</span>, <span class="st">&quot;year&quot;</span>, <span class="st">&quot;num_words&quot;</span>]]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">&quot;num_words&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    .head(<span class="dv">3</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>review_answer</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk_name
+</th>
+<th>
+speaker
+</th>
+<th>
+year
+</th>
+<th>
+num_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+717
+</th>
+<td>
+A Home Where the Spirit of the Lord Dwells
+</td>
+<td>
+Henry B. Eyring
+</td>
+<td>
+2019
+</td>
+<td>
+2247
+</td>
+</tr>
+<tr>
+<th>
+694
+</th>
+<td>
+Shall We Not Go On in So Great a Cause?
+</td>
+<td>
+M. Russell Ballard
+</td>
+<td>
+2020
+</td>
+<td>
+2234
+</td>
+</tr>
+<tr>
+<th>
+19
+</th>
+<td>
+Answers to Prayer
+</td>
+<td>
+Brook P. Hales
+</td>
+<td>
+2019
+</td>
+<td>
+2141
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>review_checks <span class="op">=</span> {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;three_rows&quot;</span>: <span class="bu">len</span>(review_answer) <span class="op">==</span> <span class="dv">3</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;allowed_years&quot;</span>: review_answer[<span class="st">&quot;year&quot;</span>].isin([<span class="dv">2019</span>, <span class="dv">2020</span>]).<span class="bu">all</span>(),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;correct_session&quot;</span>: talks.loc[review_answer.index, <span class="st">&quot;session&quot;</span>].eq(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;saturday-morning&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ).<span class="bu">all</span>(),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;decreasing_word_count&quot;</span>: review_answer[<span class="st">&quot;num_words&quot;</span>].is_monotonic_decreasing,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>review_checks</span></code></pre></div>
+<pre class="text"><code>{&#39;three_rows&#39;: True, &#39;allowed_years&#39;: np.True_, &#39;correct_session&#39;: np.True_, &#39;decreasing_word_count&#39;: True}</code></pre>
+<h2 id="checkpoint-1-predict-aggregation-and-transformation">Checkpoint 1: Predict aggregation and transformation</h2>
+<p>The following talks are invented to make the calculations visible.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>toy <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;talk&quot;</span>: <span class="bu">list</span>(<span class="st">&quot;ABCDEF&quot;</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;session&quot;</span>: [<span class="st">&quot;morning&quot;</span>] <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> [<span class="st">&quot;afternoon&quot;</span>] <span class="op">*</span> <span class="dv">3</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;num_words&quot;</span>: [<span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">3000</span>, <span class="dv">1000</span>, <span class="dv">1200</span>, <span class="dv">1400</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>toy</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk
+</th>
+<th>
+session
+</th>
+<th>
+num_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+A
+</td>
+<td>
+morning
+</td>
+<td>
+1000
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+B
+</td>
+<td>
+morning
+</td>
+<td>
+2000
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+C
+</td>
+<td>
+morning
+</td>
+<td>
+3000
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+D
+</td>
+<td>
+afternoon
+</td>
+<td>
+1000
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+E
+</td>
+<td>
+afternoon
+</td>
+<td>
+1200
+</td>
+</tr>
+<tr>
+<th>
+5
+</th>
+<td>
+F
+</td>
+<td>
+afternoon
+</td>
+<td>
+1400
+</td>
+</tr>
+</tbody>
+</table>
+<p>Predict how many rows remain after calculating session medians.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>toy_summary <span class="op">=</span> toy.groupby(<span class="st">&quot;session&quot;</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    median_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;median&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>toy_summary</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+session
+</th>
+<th>
+median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+afternoon
+</td>
+<td>
+1200.0
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+morning
+</td>
+<td>
+2000.0
+</td>
+</tr>
+</tbody>
+</table>
+<p>Two rows represent two sessions. The original talk identities are absent.</p>
+<h3 id="inspect-the-groupby-object">Inspect the GroupBy object</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>grouped <span class="op">=</span> toy.groupby(<span class="st">&quot;session&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(grouped).<span class="va">__name__</span>, grouped.ngroups)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>grouped.indices</span></code></pre></div>
+<pre class="text"><code>DataFrameGroupBy 2</code></pre>
+<pre class="text"><code>{&#39;afternoon&#39;: array([3, 4, 5]), &#39;morning&#39;: array([0, 1, 2])}</code></pre>
+<p>The mapping associates each group key with row positions: afternoon uses 3, 4, and 5, while morning uses 0, 1, and 2. Creating a GroupBy specifies the grouping. Inspection and calculations request the grouping work when they need it.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>grouped.get_group(<span class="st">&quot;morning&quot;</span>)</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk
+</th>
+<th>
+session
+</th>
+<th>
+num_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+A
+</td>
+<td>
+morning
+</td>
+<td>
+1000
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+B
+</td>
+<td>
+morning
+</td>
+<td>
+2000
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+C
+</td>
+<td>
+morning
+</td>
+<td>
+3000
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>grouped.obj <span class="kw">is</span> toy, <span class="bu">len</span>(toy)</span></code></pre></div>
+<pre class="text"><code>True</code></pre>
+<pre class="text"><code>6</code></pre>
+<p>The GroupBy keeps the source object. Extracting a group leaves the original six-row table intact. Selecting a column and requesting a reduction determines what to calculate for each group.</p>
+<p>Predict the values that should appear beside each original talk.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>toy[<span class="st">&quot;session_median_words&quot;</span>] <span class="op">=</span> (</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    toy.groupby(<span class="st">&quot;session&quot;</span>)[<span class="st">&quot;num_words&quot;</span>].transform(<span class="st">&quot;median&quot;</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>toy</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk
+</th>
+<th>
+session
+</th>
+<th>
+num_words
+</th>
+<th>
+session_median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+A
+</td>
+<td>
+morning
+</td>
+<td>
+1000
+</td>
+<td>
+2000.0
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+B
+</td>
+<td>
+morning
+</td>
+<td>
+2000
+</td>
+<td>
+2000.0
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+C
+</td>
+<td>
+morning
+</td>
+<td>
+3000
+</td>
+<td>
+2000.0
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+D
+</td>
+<td>
+afternoon
+</td>
+<td>
+1000
+</td>
+<td>
+1200.0
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+E
+</td>
+<td>
+afternoon
+</td>
+<td>
+1200
+</td>
+<td>
+1200.0
+</td>
+</tr>
+<tr>
+<th>
+5
+</th>
+<td>
+F
+</td>
+<td>
+afternoon
+</td>
+<td>
+1400
+</td>
+<td>
+1200.0
+</td>
+</tr>
+</tbody>
+</table>
+<p>Six rows still represent six talks. Morning talks receive 2,000 and afternoon talks receive 1,200 as their reference values.</p>
+<h3 id="filtering-order">Filtering order</h3>
+<p>Compare filtering talk rows before calculating medians with filtering the summary after calculating medians.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>long_toy <span class="op">=</span> toy.loc[toy[<span class="st">&quot;num_words&quot;</span>] <span class="op">&gt;=</span> <span class="dv">1500</span>]</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>filter_first <span class="op">=</span> long_toy.groupby(<span class="st">&quot;session&quot;</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    median_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;median&quot;</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>summarize_first <span class="op">=</span> toy_summary.loc[toy_summary[<span class="st">&quot;median_words&quot;</span>] <span class="op">&gt;=</span> <span class="dv">1500</span>]</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Filter talk rows first:&quot;</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(filter_first.to_string(index<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Summarize first:&quot;</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summarize_first.to_string(index<span class="op">=</span><span class="va">False</span>))</span></code></pre></div>
+<pre class="text"><code>Filter talk rows first:
+session  median_words
+morning        2500.0
+
+Summarize first:
+session  median_words
+morning        2000.0</code></pre>
+<p>The first analysis reports a morning median of 2,500 based on B and C. The second reports a morning median of 2,000 based on A, B, and C. The pipelines use different observations to calculate the statistic.</p>
+<h2 id="checkpoint-2-counts-proportions-and-recorded-values">Checkpoint 2: Counts, proportions, and recorded values</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>session_counts <span class="op">=</span> talks[<span class="st">&quot;session&quot;</span>].value_counts()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>session_counts</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+count
+</th>
+</tr>
+<tr>
+<th>
+session
+</th>
+<th>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+sunday-afternoon
+</th>
+<td>
+170
+</td>
+</tr>
+<tr>
+<th>
+saturday-morning
+</th>
+<td>
+151
+</td>
+</tr>
+<tr>
+<th>
+saturday-afternoon
+</th>
+<td>
+141
+</td>
+</tr>
+<tr>
+<th>
+sunday-morning
+</th>
+<td>
+139
+</td>
+</tr>
+<tr>
+<th>
+priesthood
+</th>
+<td>
+104
+</td>
+</tr>
+<tr>
+<th>
+womens
+</th>
+<td>
+50
+</td>
+</tr>
+<tr>
+<th>
+relief-society
+</th>
+<td>
+16
+</td>
+</tr>
+<tr>
+<th>
+young-women
+</th>
+<td>
+16
+</td>
+</tr>
+<tr>
+<th>
+saturday-evening
+</th>
+<td>
+7
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>session_proportions <span class="op">=</span> talks[<span class="st">&quot;session&quot;</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>session_proportions</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+proportion
+</th>
+</tr>
+<tr>
+<th>
+session
+</th>
+<th>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+sunday-afternoon
+</th>
+<td>
+0.214106
+</td>
+</tr>
+<tr>
+<th>
+saturday-morning
+</th>
+<td>
+0.190176
+</td>
+</tr>
+<tr>
+<th>
+saturday-afternoon
+</th>
+<td>
+0.177582
+</td>
+</tr>
+<tr>
+<th>
+sunday-morning
+</th>
+<td>
+0.175063
+</td>
+</tr>
+<tr>
+<th>
+priesthood
+</th>
+<td>
+0.130982
+</td>
+</tr>
+<tr>
+<th>
+womens
+</th>
+<td>
+0.062972
+</td>
+</tr>
+<tr>
+<th>
+relief-society
+</th>
+<td>
+0.020151
+</td>
+</tr>
+<tr>
+<th>
+young-women
+</th>
+<td>
+0.020151
+</td>
+</tr>
+<tr>
+<th>
+saturday-evening
+</th>
+<td>
+0.008816
+</td>
+</tr>
+</tbody>
+</table>
+<p>Every session label is present, so these proportions use 794 talks as the denominator. They describe talks rather than unique speakers.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>availability <span class="op">=</span> talks.groupby(<span class="st">&quot;session&quot;</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    n_talks<span class="op">=</span>(<span class="st">&quot;runtime&quot;</span>, <span class="st">&quot;size&quot;</span>),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    n_recorded_runtimes<span class="op">=</span>(<span class="st">&quot;runtime&quot;</span>, <span class="st">&quot;count&quot;</span>),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>availability</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+session
+</th>
+<th>
+n_talks
+</th>
+<th>
+n_recorded_runtimes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+priesthood
+</td>
+<td>
+104
+</td>
+<td>
+92
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+relief-society
+</td>
+<td>
+16
+</td>
+<td>
+14
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+saturday-afternoon
+</td>
+<td>
+141
+</td>
+<td>
+114
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+saturday-evening
+</td>
+<td>
+7
+</td>
+<td>
+6
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+saturday-morning
+</td>
+<td>
+151
+</td>
+<td>
+131
+</td>
+</tr>
+<tr>
+<th>
+5
+</th>
+<td>
+sunday-afternoon
+</td>
+<td>
+170
+</td>
+<td>
+139
+</td>
+</tr>
+<tr>
+<th>
+6
+</th>
+<td>
+sunday-morning
+</td>
+<td>
+139
+</td>
+<td>
+114
+</td>
+</tr>
+<tr>
+<th>
+7
+</th>
+<td>
+womens
+</td>
+<td>
+50
+</td>
+<td>
+41
+</td>
+</tr>
+<tr>
+<th>
+8
+</th>
+<td>
+young-women
+</td>
+<td>
+16
+</td>
+<td>
+12
+</td>
+</tr>
+</tbody>
+</table>
+<p>There are 794 talk rows and 663 recorded runtimes. <code>size</code> counts observations, while <code>count</code> counts nonmissing values of a variable. Missingness repair belongs to a later lesson.</p>
+<h2 id="checkpoint-3-grouped-summaries">Checkpoint 3: Grouped summaries</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>session_summary <span class="op">=</span> (</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    talks.groupby(<span class="st">&quot;session&quot;</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        n_talks<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;size&quot;</span>),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        mean_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;mean&quot;</span>),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        median_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;median&quot;</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">&quot;median_words&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>session_summary.<span class="bu">round</span>(<span class="dv">1</span>)</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+session
+</th>
+<th>
+n_talks
+</th>
+<th>
+mean_words
+</th>
+<th>
+median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+1
+</th>
+<td>
+relief-society
+</td>
+<td>
+16
+</td>
+<td>
+2035.2
+</td>
+<td>
+2000.5
+</td>
+</tr>
+<tr>
+<th>
+8
+</th>
+<td>
+young-women
+</td>
+<td>
+16
+</td>
+<td>
+2020.6
+</td>
+<td>
+1914.5
+</td>
+</tr>
+<tr>
+<th>
+0
+</th>
+<td>
+priesthood
+</td>
+<td>
+104
+</td>
+<td>
+1852.5
+</td>
+<td>
+1876.0
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+saturday-evening
+</td>
+<td>
+7
+</td>
+<td>
+1568.4
+</td>
+<td>
+1765.0
+</td>
+</tr>
+<tr>
+<th>
+6
+</th>
+<td>
+sunday-morning
+</td>
+<td>
+139
+</td>
+<td>
+1741.2
+</td>
+<td>
+1739.0
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+saturday-afternoon
+</td>
+<td>
+141
+</td>
+<td>
+1689.7
+</td>
+<td>
+1703.0
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+saturday-morning
+</td>
+<td>
+151
+</td>
+<td>
+1663.4
+</td>
+<td>
+1680.0
+</td>
+</tr>
+<tr>
+<th>
+7
+</th>
+<td>
+womens
+</td>
+<td>
+50
+</td>
+<td>
+1658.6
+</td>
+<td>
+1571.0
+</td>
+</tr>
+<tr>
+<th>
+5
+</th>
+<td>
+sunday-afternoon
+</td>
+<td>
+170
+</td>
+<td>
+1549.7
+</td>
+<td>
+1569.5
+</td>
+</tr>
+</tbody>
+</table>
+<p>Nine rows represent nine session categories. Group sizes help us interpret the summaries. A total word count would combine talk length and the number of talks.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>year_session <span class="op">=</span> (</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    talks.groupby([<span class="st">&quot;year&quot;</span>, <span class="st">&quot;session&quot;</span>], as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    .agg(n_talks<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;size&quot;</span>),</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>         median_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;median&quot;</span>))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>year_session.head()</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+year
+</th>
+<th>
+session
+</th>
+<th>
+n_talks
+</th>
+<th>
+median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+2010
+</td>
+<td>
+priesthood
+</td>
+<td>
+12
+</td>
+<td>
+2073.0
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+2010
+</td>
+<td>
+relief-society
+</td>
+<td>
+4
+</td>
+<td>
+2030.5
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+2010
+</td>
+<td>
+saturday-afternoon
+</td>
+<td>
+13
+</td>
+<td>
+1853.0
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+2010
+</td>
+<td>
+saturday-morning
+</td>
+<td>
+14
+</td>
+<td>
+1483.0
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+2010
+</td>
+<td>
+sunday-afternoon
+</td>
+<td>
+16
+</td>
+<td>
+1492.0
+</td>
+</tr>
+</tbody>
+</table>
+<p>Each row represents an observed year-session combination. The table does not require every possible combination to occur.</p>
+<h2 id="checkpoint-4-a-group-reference-beside-each-talk">Checkpoint 4: A group reference beside each talk</h2>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>talks[<span class="st">&quot;session_median_words&quot;</span>] <span class="op">=</span> (</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    talks.groupby(<span class="st">&quot;session&quot;</span>)[<span class="st">&quot;num_words&quot;</span>].transform(<span class="st">&quot;median&quot;</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>talks[<span class="st">&quot;above_session_median&quot;</span>] <span class="op">=</span> (</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    talks[<span class="st">&quot;num_words&quot;</span>] <span class="op">&gt;</span> talks[<span class="st">&quot;session_median_words&quot;</span>]</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>talks[[<span class="st">&quot;talk_name&quot;</span>, <span class="st">&quot;session&quot;</span>, <span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;session_median_words&quot;</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;above_session_median&quot;</span>]].head()</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk_name
+</th>
+<th>
+session
+</th>
+<th>
+num_words
+</th>
+<th>
+session_median_words
+</th>
+<th>
+above_session_median
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+Finding Joy in Christ
+</td>
+<td>
+saturday-afternoon
+</td>
+<td>
+1514
+</td>
+<td>
+1703.0
+</td>
+<td>
+False
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+The Culture of Christ
+</td>
+<td>
+saturday-afternoon
+</td>
+<td>
+1500
+</td>
+<td>
+1703.0
+</td>
+<td>
+False
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+Let Patience Have Her Perfect Work, and Count It All Joy!
+</td>
+<td>
+sunday-afternoon
+</td>
+<td>
+1492
+</td>
+<td>
+1569.5
+</td>
+<td>
+False
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+Ask, Seek, and Knock
+</td>
+<td>
+sunday-afternoon
+</td>
+<td>
+1484
+</td>
+<td>
+1569.5
+</td>
+<td>
+False
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+Enduring Power
+</td>
+<td>
+sunday-afternoon
+</td>
+<td>
+1430
+</td>
+<td>
+1569.5
+</td>
+<td>
+False
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>above_all_years <span class="op">=</span> talks.loc[talks[<span class="st">&quot;above_session_median&quot;</span>]]</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(talks), <span class="bu">len</span>(above_all_years)</span></code></pre></div>
+<pre class="text"><code>794</code></pre>
+<pre class="text"><code>395</code></pre>
+<p>The transformed column retains the original talk-row index. A strict greater-than comparison excludes ties, so the number above a median need not be exactly half of a group. This reference currently uses all years in the data.</p>
+<h2 id="checkpoint-5-dates-and-pandas-plots">Checkpoint 5: Dates and pandas plots</h2>
+<h3 id="date-components-and-a-yearly-summary">Date components and a yearly summary</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>talks[<span class="st">&quot;date&quot;</span>] <span class="op">=</span> pd.to_datetime(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    talks[<span class="st">&quot;date&quot;</span>], <span class="bu">format</span><span class="op">=</span><span class="st">&quot;%Y-%m-</span><span class="sc">%d</span><span class="st"> %H:%M:%S.</span><span class="sc">%f</span><span class="st">&quot;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>talks[<span class="st">&quot;talk_year&quot;</span>] <span class="op">=</span> talks[<span class="st">&quot;date&quot;</span>].dt.year</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>annual <span class="op">=</span> (</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    talks.groupby(<span class="st">&quot;talk_year&quot;</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    .agg(n_talks<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;size&quot;</span>),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>         median_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;median&quot;</span>))</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">&quot;talk_year&quot;</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>annual</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk_year
+</th>
+<th>
+n_talks
+</th>
+<th>
+median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+0
+</th>
+<td>
+2010
+</td>
+<td>
+75
+</td>
+<td>
+1853.0
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+2011
+</td>
+<td>
+75
+</td>
+<td>
+1844.0
+</td>
+</tr>
+<tr>
+<th>
+2
+</th>
+<td>
+2012
+</td>
+<td>
+75
+</td>
+<td>
+1768.0
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+2013
+</td>
+<td>
+75
+</td>
+<td>
+1711.0
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+2014
+</td>
+<td>
+75
+</td>
+<td>
+1651.0
+</td>
+</tr>
+<tr>
+<th>
+5
+</th>
+<td>
+2015
+</td>
+<td>
+75
+</td>
+<td>
+1630.0
+</td>
+</tr>
+<tr>
+<th>
+6
+</th>
+<td>
+2016
+</td>
+<td>
+72
+</td>
+<td>
+1684.5
+</td>
+</tr>
+<tr>
+<th>
+7
+</th>
+<td>
+2017
+</td>
+<td>
+71
+</td>
+<td>
+1722.0
+</td>
+</tr>
+<tr>
+<th>
+8
+</th>
+<td>
+2018
+</td>
+<td>
+69
+</td>
+<td>
+1650.0
+</td>
+</tr>
+<tr>
+<th>
+9
+</th>
+<td>
+2019
+</td>
+<td>
+65
+</td>
+<td>
+1652.0
+</td>
+</tr>
+<tr>
+<th>
+10
+</th>
+<td>
+2020
+</td>
+<td>
+67
+</td>
+<td>
+1629.0
+</td>
+</tr>
+</tbody>
+</table>
+<p>Eleven rows represent eleven years of recorded talks.</p>
+<h3 id="a-bar-chart-of-session-medians">A bar chart of session medians</h3>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> session_summary.sort_values(<span class="st">&quot;median_words&quot;</span>).plot.barh(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;session&quot;</span>, y<span class="op">=</span><span class="st">&quot;median_words&quot;</span>, legend<span class="op">=</span><span class="va">False</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Median word count&quot;</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Session&quot;</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;Typical talk length by session, 2010-2020&quot;</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<figure>
+<img src="pandas-questions-complete_files/figure-1.png" alt="Activity plot" />
+<figcaption aria-hidden="true">Activity plot</figcaption>
+</figure>
+<h3 id="a-bar-chart-of-counts">A bar chart of counts</h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> session_counts.sort_values().plot.barh(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Number of talks&quot;</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Session&quot;</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<figure>
+<img src="pandas-questions-complete_files/figure-2.png" alt="Activity plot" />
+<figcaption aria-hidden="true">Activity plot</figcaption>
+</figure>
+<h3 id="a-line-chart-over-time">A line chart over time</h3>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> annual.plot.line(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;talk_year&quot;</span>, y<span class="op">=</span><span class="st">&quot;median_words&quot;</span>, marker<span class="op">=</span><span class="st">&quot;o&quot;</span>, legend<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Year&quot;</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Median word count&quot;</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;Typical talk length by year&quot;</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(annual[<span class="st">&quot;talk_year&quot;</span>])</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<figure>
+<img src="pandas-questions-complete_files/figure-3.png" alt="Activity plot" />
+<figcaption aria-hidden="true">Activity plot</figcaption>
+</figure>
+<h3 id="a-histogram-of-individual-talk-lengths">A histogram of individual talk lengths</h3>
+<div class="sourceCode" id="cb33"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> talks[<span class="st">&quot;num_words&quot;</span>].plot.hist(bins<span class="op">=</span><span class="dv">20</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Word count&quot;</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Number of talks&quot;</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<figure>
+<img src="pandas-questions-complete_files/figure-4.png" alt="Activity plot" />
+<figcaption aria-hidden="true">Activity plot</figcaption>
+</figure>
+<p>A categorical bar represents a session. A line-chart point represents a year. A histogram bar counts talks whose word counts fall in a numeric interval.</p>
+<h2 id="checkpoint-6-final-request">Checkpoint 6: Final request</h2>
+<p>For recorded talks from 2018 through 2020:</p>
+<ol type="1">
+<li>Compare median word counts across session categories and report counts.</li>
+<li>Retain categories with at least ten talks and order by median word count.</li>
+<li>Make a bar chart of that summary.</li>
+<li>Identify talks in the retained categories that exceed their own session’s median <strong>calculated from the 2018-2020 talks</strong>.</li>
+<li>Write one interpretation and one limitation.</li>
+</ol>
+<h3 id="select-the-reference-observations">Select the reference observations</h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>recent <span class="op">=</span> talks.loc[talks[<span class="st">&quot;year&quot;</span>].between(<span class="dv">2018</span>, <span class="dv">2020</span>)].copy()</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(recent)</span></code></pre></div>
+<pre class="text"><code>201</code></pre>
+<h3 id="summarize-filter-groups-and-order">Summarize, filter groups, and order</h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>recent_summary <span class="op">=</span> recent.groupby(<span class="st">&quot;session&quot;</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    n_talks<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;size&quot;</span>),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    median_words<span class="op">=</span>(<span class="st">&quot;num_words&quot;</span>, <span class="st">&quot;median&quot;</span>),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>eligible <span class="op">=</span> (</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    recent_summary.loc[recent_summary[<span class="st">&quot;n_talks&quot;</span>] <span class="op">&gt;=</span> <span class="dv">10</span>]</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">&quot;median_words&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>eligible</span></code></pre></div>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+session
+</th>
+<th>
+n_talks
+</th>
+<th>
+median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+5
+</th>
+<td>
+sunday-morning
+</td>
+<td>
+37
+</td>
+<td>
+1790.0
+</td>
+</tr>
+<tr>
+<th>
+3
+</th>
+<td>
+saturday-morning
+</td>
+<td>
+41
+</td>
+<td>
+1728.0
+</td>
+</tr>
+<tr>
+<th>
+1
+</th>
+<td>
+saturday-afternoon
+</td>
+<td>
+39
+</td>
+<td>
+1629.0
+</td>
+</tr>
+<tr>
+<th>
+4
+</th>
+<td>
+sunday-afternoon
+</td>
+<td>
+46
+</td>
+<td>
+1621.0
+</td>
+</tr>
+<tr>
+<th>
+0
+</th>
+<td>
+priesthood
+</td>
+<td>
+13
+</td>
+<td>
+1554.0
+</td>
+</tr>
+<tr>
+<th>
+6
+</th>
+<td>
+womens
+</td>
+<td>
+18
+</td>
+<td>
+1480.5
+</td>
+</tr>
+</tbody>
+</table>
+<p>There are 201 recent talks, seven observed session categories, and six categories that meet the ten-talk condition. Seven Saturday evening talks fall outside the retained categories, leaving 194 talks in eligible categories.</p>
+<h3 id="plot-the-group-summary">Plot the group summary</h3>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> eligible.sort_values(<span class="st">&quot;median_words&quot;</span>).plot.barh(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">&quot;session&quot;</span>, y<span class="op">=</span><span class="st">&quot;median_words&quot;</span>, legend<span class="op">=</span><span class="va">False</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Median word count&quot;</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Session&quot;</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;Sessions with at least 10 talks, 2018-2020&quot;</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<figure>
+<img src="pandas-questions-complete_files/figure-5.png" alt="Activity plot" />
+<figcaption aria-hidden="true">Activity plot</figcaption>
+</figure>
+<h3 id="attach-references-and-identify-qualifying-talks">Attach references and identify qualifying talks</h3>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>recent[<span class="st">&quot;session_median_words&quot;</span>] <span class="op">=</span> (</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    recent.groupby(<span class="st">&quot;session&quot;</span>)[<span class="st">&quot;num_words&quot;</span>].transform(<span class="st">&quot;median&quot;</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>above_mask <span class="op">=</span> (</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    recent[<span class="st">&quot;session&quot;</span>].isin(eligible[<span class="st">&quot;session&quot;</span>])</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span> (recent[<span class="st">&quot;num_words&quot;</span>] <span class="op">&gt;</span> recent[<span class="st">&quot;session_median_words&quot;</span>])</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>above_recent <span class="op">=</span> recent.loc[</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    above_mask,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    [<span class="st">&quot;talk_name&quot;</span>, <span class="st">&quot;speaker&quot;</span>, <span class="st">&quot;session&quot;</span>, <span class="st">&quot;year&quot;</span>, <span class="st">&quot;num_words&quot;</span>,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>     <span class="st">&quot;session_median_words&quot;</span>],</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>].sort_values([<span class="st">&quot;session&quot;</span>, <span class="st">&quot;num_words&quot;</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>])</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(above_recent), above_recent.head()</span></code></pre></div>
+<pre class="text"><code>95</code></pre>
+<table class="dataframe data-output">
+<thead>
+<tr style="text-align: right;">
+<th>
+</th>
+<th>
+talk_name
+</th>
+<th>
+speaker
+</th>
+<th>
+session
+</th>
+<th>
+year
+</th>
+<th>
+num_words
+</th>
+<th>
+session_median_words
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>
+701
+</th>
+<td>
+Inspired Ministering
+</td>
+<td>
+Henry B. Eyring
+</td>
+<td>
+priesthood
+</td>
+<td>
+2018
+</td>
+<td>
+2217
+</td>
+<td>
+1554.0
+</td>
+</tr>
+<tr>
+<th>
+377
+</th>
+<td>
+Your Priesthood Playbook
+</td>
+<td>
+Gary E. Stevenson
+</td>
+<td>
+priesthood
+</td>
+<td>
+2019
+</td>
+<td>
+2202
+</td>
+<td>
+1554.0
+</td>
+</tr>
+<tr>
+<th>
+649
+</th>
+<td>
+The Powers of the Priesthood
+</td>
+<td>
+Dallin H. Oaks
+</td>
+<td>
+priesthood
+</td>
+<td>
+2018
+</td>
+<td>
+1894
+</td>
+<td>
+1554.0
+</td>
+</tr>
+<tr>
+<th>
+386
+</th>
+<td>
+Behold! A Royal Army
+</td>
+<td>
+Ronald A. Rasband
+</td>
+<td>
+priesthood
+</td>
+<td>
+2018
+</td>
+<td>
+1676
+</td>
+<td>
+1554.0
+</td>
+</tr>
+<tr>
+<th>
+477
+</th>
+<td>
+The Elders Quorum
+</td>
+<td>
+D. Todd Christofferson
+</td>
+<td>
+priesthood
+</td>
+<td>
+2018
+</td>
+<td>
+1660
+</td>
+<td>
+1554.0
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="check-the-answer">Check the answer</h3>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>checks <span class="op">=</span> {</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;201_recent_talks&quot;</span>: <span class="bu">len</span>(recent) <span class="op">==</span> <span class="dv">201</span>,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;all_groups_accounted_for&quot;</span>: recent_summary[<span class="st">&quot;n_talks&quot;</span>].<span class="bu">sum</span>() <span class="op">==</span> <span class="bu">len</span>(recent),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;six_eligible_sessions&quot;</span>: <span class="bu">len</span>(eligible) <span class="op">==</span> <span class="dv">6</span>,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;all_eligible_counts&quot;</span>: eligible[<span class="st">&quot;n_talks&quot;</span>].ge(<span class="dv">10</span>).<span class="bu">all</span>(),</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;194_talks_in_eligible_sessions&quot;</span>: eligible[<span class="st">&quot;n_talks&quot;</span>].<span class="bu">sum</span>() <span class="op">==</span> <span class="dv">194</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;95_above_median_talks&quot;</span>: <span class="bu">len</span>(above_recent) <span class="op">==</span> <span class="dv">95</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;allowed_years&quot;</span>: above_recent[<span class="st">&quot;year&quot;</span>].between(<span class="dv">2018</span>, <span class="dv">2020</span>).<span class="bu">all</span>(),</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;eligible_sessions&quot;</span>: above_recent[<span class="st">&quot;session&quot;</span>].isin(eligible[<span class="st">&quot;session&quot;</span>]).<span class="bu">all</span>(),</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;strictly_above_reference&quot;</span>: above_recent[<span class="st">&quot;num_words&quot;</span>].gt(</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>        above_recent[<span class="st">&quot;session_median_words&quot;</span>]</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    ).<span class="bu">all</span>(),</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;dates_match_supplied_years&quot;</span>: talks[<span class="st">&quot;talk_year&quot;</span>].eq(talks[<span class="st">&quot;year&quot;</span>]).<span class="bu">all</span>(),</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>checks</span></code></pre></div>
+<pre class="text"><code>{&#39;201_recent_talks&#39;: True, &#39;all_groups_accounted_for&#39;: np.True_, &#39;six_eligible_sessions&#39;: True, &#39;all_eligible_counts&#39;: np.True_, &#39;194_talks_in_eligible_sessions&#39;: np.True_, &#39;95_above_median_talks&#39;: True, &#39;allowed_years&#39;: np.True_, &#39;eligible_sessions&#39;: np.True_, &#39;strictly_above_reference&#39;: np.True_, &#39;dates_match_supplied_years&#39;: np.True_}</code></pre>
+<h3 id="interpretation-and-limitation">Interpretation and limitation</h3>
+<p>Among session categories with at least ten recorded talks from 2018 through 2020, Sunday morning has the largest median word count, at 1,790 words.</p>
+<p>This descriptive comparison does not establish that the session causes longer talks. Categories contain different sets of speakers and conference contexts.</p>
+<h2 id="reflection">Reflection</h2>
+<ul>
+<li>The year filter defines which observations contribute to the statistics.</li>
+<li>Aggregation changes the unit from talk to session category.</li>
+<li>The group-size filter selects summary rows.</li>
+<li>Transformation returns the group reference to each talk.</li>
+<li>The final mask selects individual talks using their reference and membership.</li>
+<li>The summary table supplies the inputs for the bar chart.</li>
+</ul>
+</main></body></html>

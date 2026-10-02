@@ -1,0 +1,16 @@
+[project]
+name = "stat-386-pandas-questions"
+version = "0.1.0"
+description = "STAT 386 grouped summaries, transformations, dates, and pandas plots"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=6.29",
+    "jupyter>=1.1",
+    "pandas>=3.0,<4",
+    "matplotlib>=3.10,<4",
+]
+
+[tool.uv]
+package = false
+

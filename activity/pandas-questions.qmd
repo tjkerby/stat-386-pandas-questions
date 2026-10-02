@@ -1,0 +1,285 @@
+---
+title: "Answering questions with pandas: Student activity"
+author: "STAT 386"
+format:
+  html:
+    toc: true
+    code-fold: false
+execute:
+  echo: true
+  warning: true
+jupyter: python3
+---
+
+## Purpose and setup
+
+Read and write pandas pipelines, summarize groups, attach group references to
+talks, and make plots. Before each operation, predict what one row of its result
+will represent. Work with a partner and explain the question before writing code.
+
+Run the cells in Positron using the project's `.venv` Python interpreter.
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+talks = pd.read_csv("../data/talks.csv")
+talks.shape
+```
+
+Check that the initial table has 794 talk rows and 14 columns.
+
+## Checkpoint 0: Review familiar pipelines
+
+### Decode the code
+
+Without running it, describe the question this code answers. Predict the result
+type and shape. Explain what changes if `head(3)` comes before sorting.
+
+```{python}
+#| eval: false
+decoded = (
+    talks.loc[
+        (talks["year"] == 2020)
+        & (talks["session"] == "sunday-morning"),
+        ["talk_name", "speaker", "num_words"]
+    ]
+    .sort_values("num_words", ascending=False)
+    .head(3)
+)
+decoded
+```
+
+### Construct the code
+
+Find the three Saturday morning talks from 2019 or 2020 with the largest word
+counts. Show the title, speaker, year, and word count. Use named steps or a chain.
+
+```{python}
+#| eval: false
+# TODO: Define the row conditions.
+# TODO: Select the requested columns, order the rows, and keep three.
+# TODO: Check one property of the answer.
+```
+
+## Checkpoint 1: Predict aggregation and transformation
+
+These six talks are invented so you can inspect the arithmetic.
+
+```{python}
+toy = pd.DataFrame({
+    "talk": list("ABCDEF"),
+    "session": ["morning"] * 3 + ["afternoon"] * 3,
+    "num_words": [1000, 2000, 3000, 1000, 1200, 1400],
+})
+toy
+```
+
+Sketch a table with the median word count for each session. How many rows does it
+have? Does it still identify talk C?
+
+```{python}
+#| eval: false
+# TODO: Use groupby and a median to create toy_summary.
+```
+
+### Inspect the GroupBy object
+
+Create `grouped = toy.groupby("session")`. Inspect `grouped.ngroups` and
+`grouped.indices`, then request `grouped.get_group("morning")`. Explain which
+rows belong to each group and whether the original table still has six rows.
+
+```{python}
+#| eval: false
+# TODO: Create the GroupBy, inspect its membership, and extract morning.
+# TODO: Check grouped.obj is toy and len(toy).
+```
+
+Now sketch the original six rows with an extra column containing each talk's
+session median. Use `transform("median")` to create that column.
+
+```{python}
+#| eval: false
+# TODO: Add session_median_words beside each original toy talk.
+```
+
+Compare two analyses on paper, then check them in code:
+
+1. Keep talks with at least 1,500 words, then calculate session medians.
+2. Calculate medians from all six talks, then keep sessions whose median is at
+   least 1,500 words.
+
+Which observations determine the morning median in each analysis?
+
+```{python}
+#| eval: false
+# TODO: Build each pipeline and compare the reported medians.
+```
+
+## Checkpoint 2: Counts, proportions, and recorded values
+
+Count recorded talks by session, then calculate the proportion in each category.
+Use `value_counts()` with and without `normalize=True`. State the denominator.
+
+```{python}
+#| eval: false
+# TODO: Create session_counts and session_proportions.
+```
+
+Compare `size()` with `count()` on the runtime column. Why do they differ?
+Do not parse or repair runtime values today.
+
+```{python}
+#| eval: false
+# TODO: Create a session table with n_talks and n_recorded_runtimes.
+```
+
+## Checkpoint 3: Grouped summaries
+
+Create `session_summary` with one row per session category and these columns:
+`session`, `n_talks`, `mean_words`, and `median_words`. Keep the grouping variable
+as a column with `as_index=False`. Order by decreasing median word count.
+
+```{python}
+#| eval: false
+# TODO: Use named aggregation and sort_values.
+```
+
+How many rows should the result have? Why include group size beside the median?
+
+Group by both year and session, keeping counts and medians. What does a row now
+represent? Must every possible combination occur?
+
+```{python}
+#| eval: false
+# TODO: Create year_session using two grouping keys.
+```
+
+## Checkpoint 4: A group reference beside each talk
+
+Add `session_median_words` to the talks table using a grouped transformation.
+Then add `above_session_median`, a Boolean column. Select talks for which it is
+true. Inspect a few titles, sessions, counts, and reference values.
+
+```{python}
+#| eval: false
+# TODO: Transform the session median back to talk rows.
+# TODO: Compare word counts with the reference and apply the mask.
+```
+
+How many rows does the transformed intermediate retain? Why would directly
+assigning a session-indexed summary Series cause a label-alignment problem?
+
+## Checkpoint 5: Dates and pandas plots
+
+Convert the date column to datetime using the supplied format, then derive
+`talk_year` with `.dt.year`. Check it against the existing year column.
+
+```{python}
+#| eval: false
+# TODO: Use pd.to_datetime with format="%Y-%m-%d %H:%M:%S.%f".
+# TODO: Add talk_year and check it against year.
+```
+
+Create `annual` with counts and median word counts by derived year. Sort years
+chronologically.
+
+```{python}
+#| eval: false
+# TODO: Create the yearly summary.
+```
+
+Use pandas plotting methods to make the following displays. Add meaningful axis
+labels. Use `plt.tight_layout()` and `plt.show()` after each figure.
+
+- A horizontal bar chart of session median word counts.
+- A horizontal bar chart of session counts.
+- A line chart of yearly median word counts.
+- A histogram of individual word counts.
+
+```{python}
+#| eval: false
+# TODO: Use .plot.barh(x="session", y="median_words", legend=False).
+```
+
+```{python}
+#| eval: false
+# TODO: Plot the session_counts Series with .plot.barh().
+```
+
+```{python}
+#| eval: false
+# TODO: Use .plot.line(x="talk_year", y="median_words", marker="o").
+```
+
+```{python}
+#| eval: false
+# TODO: Use .plot.hist(bins=20) on the num_words Series.
+```
+
+State what one bar or point represents in each figure.
+
+## Checkpoint 6: Final request
+
+For recorded talks from 2018 through 2020:
+
+1. Compare median word counts across session categories and report counts.
+2. Retain categories with at least ten talks and order by median word count.
+3. Make a bar chart of that summary.
+4. Identify talks in the retained categories that exceed their own session's
+   median **calculated from the 2018-2020 talks**.
+5. Write one interpretation and one limitation.
+
+### Your plan
+
+Explain which conditions apply before aggregation and which apply afterward.
+State the result unit at each step. The ten-talk threshold is a condition in the
+request, not a guarantee that a comparison establishes a general conclusion.
+
+### Your code
+
+```{python}
+#| eval: false
+# TODO: Create an independent recent table containing 2018-2020 talks.
+```
+
+```{python}
+#| eval: false
+# TODO: Calculate recent_summary with n_talks and median_words.
+# TODO: Create eligible by filtering counts and sorting medians.
+```
+
+```{python}
+#| eval: false
+# TODO: Plot the eligible summary with clear labels.
+```
+
+```{python}
+#| eval: false
+# TODO: Recalculate each session reference using only recent talks.
+# TODO: Select above_recent with both eligible-session membership and
+#       a strict greater-than comparison with the session median.
+# TODO: Show title, speaker, session, year, word count, and reference.
+```
+
+### Your checks and interpretation
+
+Check that group counts account for the recent observations before filtering
+groups. Confirm that every final talk has an allowed year, belongs to an eligible
+category, and exceeds its reference. Explain why filtering categories reduces
+the total number of talks represented in the retained summary.
+
+```{python}
+#| eval: false
+# TODO: Write meaningful checks for the final results.
+```
+
+Write one sentence about the summary and one limitation on what it tells us.
+
+## Recovery and reference
+
+After attempting a checkpoint, compare your reasoning with the
+[completed activity](pandas-questions-complete.qmd).
+
+The lecture ends with an exit check that distinguishes speaker summaries,
+speaker references attached to talks, and yearly plots.

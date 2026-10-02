@@ -1,0 +1,11 @@
+| session | count | proportion |
+| :-- | --: | --: |
+| sunday-afternoon | 170 | 0.214 |
+| saturday-morning | 151 | 0.19 |
+| saturday-afternoon | 141 | 0.178 |
+| sunday-morning | 139 | 0.175 |
+| priesthood | 104 | 0.131 |
+| womens | 50 | 0.063 |
+| relief-society | 16 | 0.02 |
+| young-women | 16 | 0.02 |
+| saturday-evening | 7 | 0.009 |

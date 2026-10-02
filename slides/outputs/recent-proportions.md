@@ -1,0 +1,9 @@
+| session | proportion |
+| :-- | --: |
+| sunday-afternoon | 0.229 |
+| saturday-morning | 0.204 |
+| saturday-afternoon | 0.194 |
+| sunday-morning | 0.184 |
+| womens | 0.09 |
+| priesthood | 0.065 |
+| saturday-evening | 0.035 |

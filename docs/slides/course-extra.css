@@ -1,0 +1,260 @@
+
+
+.reveal {
+  font-size: 30px;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+.reveal h2 {
+  border-bottom: 4px solid #0062a8;
+  padding-bottom: 0.18em;
+  margin-bottom: 0.55em;
+}
+
+.reveal h3 {
+  color: #0062a8;
+}
+
+.reveal .title {
+  font-size: 2.25em;
+  line-height: 1.04;
+}
+
+.reveal .subtitle {
+  color: #49657c;
+  font-size: 1.05em;
+}
+
+.reveal pre code {
+  max-height: 610px;
+  font-size: 0.84em;
+  line-height: 1.28;
+}
+
+.reveal code {
+  color: #7a263a;
+}
+
+.reveal table {
+  font-size: 0.82em;
+  margin-top: 0.45em;
+}
+
+.reveal table th {
+  background: #002e5d;
+  color: white;
+}
+
+.reveal table td,
+.reveal table th {
+  padding: 0.32em 0.55em;
+}
+
+.reveal blockquote {
+  border-left: 7px solid #0062a8;
+  background: #eaf4fa;
+  color: #173b57;
+  font-style: normal;
+  padding: 0.55em 0.8em;
+  width: 88%;
+}
+
+.reveal .question {
+  color: #002e5d;
+  font-size: 1.12em;
+  font-weight: 650;
+  margin-top: 0.7em;
+}
+
+.reveal .takeaway {
+  border-left: 8px solid #c5a572;
+  background: #fff8e8;
+  color: #273644;
+  font-size: 1.04em;
+  padding: 0.55em 0.8em;
+  margin-top: 0.7em;
+}
+
+.reveal .output {
+  background: #ffffff;
+  border: 2px solid #aebdca;
+  color: #1c2b36;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  padding: 0.45em 0.65em;
+}
+
+.reveal .muted {
+  color: #607486;
+}
+
+.reveal .small {
+  font-size: 0.72em;
+}
+
+.reveal .smaller {
+  font-size: 0.62em;
+}
+
+.reveal .tight li {
+  margin-bottom: 0.16em;
+}
+
+.reveal .center {
+  text-align: center;
+}
+
+.reveal .big-number {
+  color: #0062a8;
+  font-size: 2.4em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.reveal .highlight {
+  color: #0062a8;
+  font-weight: 700;
+}
+
+.reveal .slice-table table,
+.reveal .score-table table,
+.reveal .dataframe-table table,
+.reveal .mask-table table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.reveal .slice-table td,
+.reveal .slice-table th,
+.reveal .score-table td,
+.reveal .score-table th,
+.reveal .dataframe-table td,
+.reveal .dataframe-table th,
+.reveal .mask-table td,
+.reveal .mask-table th {
+  text-align: center;
+}
+
+.reveal .mask-true {
+  background: #d9edf8;
+  color: #003f70;
+  font-weight: 750;
+}
+
+.reveal .mask-false {
+  background: #eef1f4;
+  color: #71808d;
+}
+
+.reveal .series-label {
+  color: #7a263a;
+  font-weight: 700;
+}
+
+.reveal .dataframe-label {
+  color: #0062a8;
+  font-weight: 700;
+}
+
+.reveal .operation-list li {
+  margin-bottom: 0.42em;
+}
+
+.reveal .code-result {
+  background: #ffffff;
+  border: 2px solid #aebdca;
+  padding: 0.35em 0.55em;
+}
+
+.reveal .kept {
+  background: #d9edf8;
+  border-radius: 0.18em;
+  color: #003f70;
+  display: inline-block;
+  font-weight: 750;
+  min-width: 2.2em;
+  padding: 0.14em 0.24em;
+}
+
+.reveal .dropped {
+  color: #95a4b1;
+  text-decoration: line-through;
+  text-decoration-thickness: 0.08em;
+}
+
+.reveal .plot-image img {
+  display: block;
+  margin: 0 auto;
+  max-height: 610px;
+  max-width: 100%;
+}
+
+.reveal .plot-caption {
+  color: #526b7f;
+  font-size: 0.68em;
+  margin-top: 0.25em;
+  text-align: center;
+}
+
+.reveal .warning {
+  color: #9b2c2c;
+  font-weight: 650;
+}
+
+.reveal .footer {
+  color: #597083;
+  font-size: 0.48em;
+}
+
+.reveal .slide-number {
+  color: #49657c;
+  font-size: 0.55em;
+}
+
+.reveal .progress {
+  color: #0062a8;
+}
+
+.reveal .columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 3%;
+}
+
+.reveal .column {
+  min-width: 0;
+}
+
+.reveal .columns pre {
+  width: 100%;
+  margin: 0.3em 0;
+}
+
+.reveal .columns pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.reveal .result-table table {
+  font-size: 0.76em;
+  max-width: 100%;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.reveal .result-table td,
+.reveal .result-table th {
+  padding: 0.27em 0.4em;
+  overflow-wrap: anywhere;
+}
+
+.reveal .columns .plot-image img {
+  max-height: 510px;
+  object-fit: contain;
+}

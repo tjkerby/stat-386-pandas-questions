@@ -1,0 +1,11 @@
+| session | median_words |
+| :-- | --: |
+| priesthood | 1876.0 |
+| relief-society | 2000.5 |
+| saturday-afternoon | 1703.0 |
+| saturday-evening | 1765.0 |
+| saturday-morning | 1680.0 |
+| sunday-afternoon | 1569.5 |
+| sunday-morning | 1739.0 |
+| womens | 1571.0 |
+| young-women | 1914.5 |

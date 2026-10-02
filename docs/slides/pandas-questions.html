@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
+
+  <meta name="author" content="STAT 386">
+  <meta name="dcterms.date" content="2026-10-02">
+  <title>STAT 386: Answering questions with pandas – Answering questions with pandas</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-3fe1c00eadaccc5ae5e0f0331894330e.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Answering questions with pandas</h1>
+  <p class="subtitle">Groups, comparisons, and plots</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+STAT 386 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-10-02</p>
+</section>
+<section id="review-decode-this-pipeline" class="slide level2">
+<h2>Review: decode this pipeline</h2>
+<p><code>talks</code> contains 794 rows. Each row represents one talk.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>answer <span class="op">=</span> (</span>
+<span id="cb1-2"><a></a>    talks.loc[</span>
+<span id="cb1-3"><a></a>        (talks[<span class="st">"year"</span>] <span class="op">==</span> <span class="dv">2020</span>)</span>
+<span id="cb1-4"><a></a>        <span class="op">&amp;</span> (talks[<span class="st">"session"</span>] <span class="op">==</span> <span class="st">"sunday-morning"</span>),</span>
+<span id="cb1-5"><a></a>        [<span class="st">"talk_name"</span>, <span class="st">"speaker"</span>, <span class="st">"num_words"</span>]</span>
+<span id="cb1-6"><a></a>    ]</span>
+<span id="cb1-7"><a></a>    .sort_values(<span class="st">"num_words"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-8"><a></a>    .head(<span class="dv">3</span>)</span>
+<span id="cb1-9"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With a partner: state the question this code answers.</p>
+<p>What does one output row represent? What changes if <code>head(3)</code> comes first?</p>
+<aside class="notes">
+<p>Allow 45 seconds individually and 60 seconds with a partner. Expected: three Sunday morning talks from 2020 with the largest word counts, showing title, speaker, and word count. Output rows still represent talks. Taking head first restricts the candidate rows before the comparison. Do not reveal the answer until pairs have a chance to respond.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="review-the-decoded-question" class="slide level2">
+<h2>Review: the decoded question</h2>
+<blockquote>
+<p>Find the three Sunday morning talks from 2020 with the largest word counts. Show the title, speaker, and word count.</p>
+</blockquote>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk_name</th>
+<th style="text-align: left;">speaker</th>
+<th style="text-align: right;">num_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hear Him</td>
+<td style="text-align: left;">Russell M. Nelson</td>
+<td style="text-align: right;">2591</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">�Let This House Be Built unto My Name�</td>
+<td style="text-align: left;">David A. Bednar</td>
+<td style="text-align: right;">1912</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Let God Prevail</td>
+<td style="text-align: left;">Russell M. Nelson</td>
+<td style="text-align: right;">1858</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Filtering and column selection come before ordering and taking three rows.</p>
+<aside class="notes">
+<p>Immediate review debrief. The computed result has shape (3, 3). Ask one pair to explain the two axes of loc and another to explain why sorting comes before head. Taking head first restricts the candidates before finding the largest counts. Allow about one minute.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="review-construct-a-pipeline" class="slide level2">
+<h2>Review: construct a pipeline</h2>
+<blockquote>
+<p>Find the three Saturday morning talks from 2019 or 2020 with the largest word counts. Show the title, speaker, year, and word count.</p>
+</blockquote>
+<p>Write the code with a partner. Use named steps or a method chain.</p>
+<ul>
+<li>Which observations qualify?</li>
+<li>Which columns belong in the result?</li>
+<li>What order should the operations follow?</li>
+<li>What is one useful result check?</li>
+</ul>
+<aside class="notes">
+<p>Allow two minutes. Students can write in checkpoint 0 of the starter activity or on paper before opening the repository. Listen for between, isin, or a correctly parenthesized OR. All are acceptable. Reuse the foundations vocabulary without another full explanation of loc/iloc.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="review-one-working-solution" class="slide level2">
+<h2>Review: one working solution</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a>mask <span class="op">=</span> (</span>
+<span id="cb2-2"><a></a>    talks[<span class="st">"year"</span>].between(<span class="dv">2019</span>, <span class="dv">2020</span>)</span>
+<span id="cb2-3"><a></a>    <span class="op">&amp;</span> (talks[<span class="st">"session"</span>] <span class="op">==</span> <span class="st">"saturday-morning"</span>)</span>
+<span id="cb2-4"><a></a>)</span>
+<span id="cb2-5"><a></a>answer <span class="op">=</span> (</span>
+<span id="cb2-6"><a></a>    talks.loc[mask,</span>
+<span id="cb2-7"><a></a>              [<span class="st">"talk_name"</span>, <span class="st">"speaker"</span>, <span class="st">"year"</span>, <span class="st">"num_words"</span>]]</span>
+<span id="cb2-8"><a></a>    .sort_values(<span class="st">"num_words"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-9"><a></a>    .head(<span class="dv">3</span>)</span>
+<span id="cb2-10"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk_name</th>
+<th style="text-align: left;">speaker</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: right;">num_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A Home Where the Spirit of the Lord Dwells</td>
+<td style="text-align: left;">Henry B. Eyring</td>
+<td style="text-align: right;">2019</td>
+<td style="text-align: right;">2247</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Shall We Not Go On in So Great a Cause?</td>
+<td style="text-align: left;">M. Russell Ballard</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">2234</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Answers to Prayer</td>
+<td style="text-align: left;">Brook P. Hales</td>
+<td style="text-align: right;">2019</td>
+<td style="text-align: right;">2141</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<p>Check that every row qualifies and word counts decrease.</p>
+<aside class="notes">
+<p>Immediate construction debrief. The output contains three talks with the four requested columns. The largest values are across both allowed years, so sorting by year first would answer a different request. Named steps and method chains are both acceptable.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-question-about-groups" class="slide level2">
+<h2>A question about groups</h2>
+<blockquote>
+<p>How does typical talk length vary across session categories?</p>
+</blockquote>
+<div class="question">
+<p>What should one row of the answer represent?</p>
+</div>
+<p>The question determines the <strong>groups</strong>, the <strong>summary</strong>, and the <strong>comparison</strong>.</p>
+<p>We need a definition of typical and the number of observations in each group.</p>
+<aside class="notes">
+<p>Collect a mean or median proposal and a result-unit proposal. Session categories recur across conferences, so one row represents a category, not a single conference session. This slide also supplies the roadmap: aggregation changes the result unit, transformation retains talk rows, and plotting displays the analysis. Keep framing to about two minutes.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-small-teaching-table" class="slide level2">
+<h2>A small teaching table</h2>
+<p>These six invented talks make the arithmetic easy to inspect.</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a>toy <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-2"><a></a>    <span class="st">"talk"</span>: <span class="bu">list</span>(<span class="st">"ABCDEF"</span>),</span>
+<span id="cb3-3"><a></a>    <span class="st">"session"</span>: [<span class="st">"morning"</span>] <span class="op">*</span> <span class="dv">3</span></span>
+<span id="cb3-4"><a></a>               <span class="op">+</span> [<span class="st">"afternoon"</span>] <span class="op">*</span> <span class="dv">3</span>,</span>
+<span id="cb3-5"><a></a>    <span class="st">"num_words"</span>: [<span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">3000</span>,</span>
+<span id="cb3-6"><a></a>                  <span class="dv">1000</span>, <span class="dv">1200</span>, <span class="dv">1400</span>],</span>
+<span id="cb3-7"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk</th>
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">1000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">3000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1200</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1400</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<aside class="notes">
+<p>Explain that these are invented teaching data. The code and computed table appear together so students can reason without opening an editor. The same six observations recur in the GroupBy, filtering-order, and transformation examples.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="prediction-a-median-for-each-session" class="slide level2">
+<h2>Prediction: a median for each session</h2>
+<p>Using the six-talk table, sketch the answer to:</p>
+<blockquote>
+<p>What is the median word count in each session?</p>
+</blockquote>
+<ul>
+<li>How many rows should the answer have?</li>
+<li>What should the columns contain?</li>
+<li>Does the answer still identify talk C?</li>
+</ul>
+<aside class="notes">
+<p>First conceptual pause. Allow 45 seconds individually and 60 seconds with a partner. Expected: two rows, session and median_words. Morning median 2000, afternoon median 1200. Talk identities disappear during this aggregation. The next slide is the immediate debrief.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-summary-changes-what-a-row-represents" class="slide level2">
+<h2>A summary changes what a row represents</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a>toy_summary <span class="op">=</span> toy.groupby(<span class="st">"session"</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb4-2"><a></a>    median_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"median"</span>)</span>
+<span id="cb4-3"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1200.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="takeaway">
+<p>Six talk rows become two session rows.</p>
+</div>
+<aside class="notes">
+<p>Immediate prediction debrief. Group identity and medians remain, while individual talk identities disappear. as_index=False keeps the grouping variable in a regular column. The output comes from the teaching data generator.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="grouping-split-apply-combine" class="slide level2">
+<h2>Grouping: split, apply, combine</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Step</th>
+<th style="text-align: left;">In this example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Split</td>
+<td style="text-align: left;">Associate each talk row with its session</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Apply</td>
+<td style="text-align: left;">Calculate a median from each group’s values</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Combine</td>
+<td style="text-align: left;">Label each result with its session</td>
+</tr>
+</tbody>
+</table>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a>toy.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>].median()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1200.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<aside class="notes">
+<p>Connect each step to the six-talk table. The displayed table presents the two labeled values returned by the Series. The term apply names the conceptual calculation step, not a requirement to call .apply(). Source: https://pandas.pydata.org/docs/user_guide/groupby.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="inside-a-groupby-object" class="slide level2">
+<h2>Inside a GroupBy object</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a>grouped <span class="op">=</span> toy.groupby(<span class="st">"session"</span>)</span>
+<span id="cb6-2"><a></a><span class="bu">print</span>(<span class="bu">type</span>(grouped).<span class="va">__name__</span>, grouped.ngroups)</span>
+<span id="cb6-3"><a></a>grouped.indices</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The object keeps the source data and the grouping instructions.</p>
+<p>Group membership links a key to row positions.</p>
+</div><div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb7-1"><a></a>DataFrameGroupBy 2</span>
+<span id="cb7-2"><a></a>{'afternoon': array([3, 4, 5]), 'morning': array([0, 1, 2])}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>afternoon:</strong> positions 3, 4, 5</p>
+<p><strong>morning:</strong> positions 0, 1, 2</p>
+</div></div>
+<p>Grouping work happens when an inspection or calculation needs it.</p>
+<aside class="notes">
+<p>Spend about two minutes on mechanics. Calling groupby validates the grouping specification and returns a GroupBy rather than a completed summary. pandas defers splitting work until it is needed. Accessing ngroups or indices requests grouping metadata and can trigger that work. indices maps group keys to positions, not index labels in the general case. Do not describe this as immediately copying each group into an independent DataFrame. Exact internal caches vary by pandas version. Source: https://pandas.pydata.org/docs/user_guide/groupby.html and https://pandas.pydata.org/docs/reference/api/pandas.api.typing.DataFrameGroupBy.indices.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="inspecting-and-using-a-groupby" class="slide level2">
+<h2>Inspecting and using a GroupBy</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a>grouped.get_group(<span class="st">"morning"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk</th>
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">1000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">3000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a>grouped[<span class="st">"num_words"</span>].median()</span>
+<span id="cb9-2"><a></a>grouped[<span class="st">"num_words"</span>].mean()</span>
+<span id="cb9-3"><a></a>grouped.size()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">median</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">1200.0</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">2000.0</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<p><code>grouped.obj is toy</code> returns <code>True</code>. The original table still has six rows.</p>
+<aside class="notes">
+<p>Extracting a group makes its membership visible. The lower table places the three separately returned Series side by side to compare their results. Selecting num_words chooses values to work with; the reduction computes one answer per group. Built-in reductions use the group memberships and underlying values without requiring an explicit Python loop over rows. These inspection methods are for intuition, not a requirement to iterate through groups. get_group does not remove rows from the source table. Source: https://pandas.pydata.org/docs/reference/api/pandas.api.typing.DataFrameGroupBy.get_group.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="overall-and-grouped-summaries" class="slide level2">
+<h2>Overall and grouped summaries</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>talks[<span class="st">"num_words"</span>].median()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One median across all recorded talks.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb11-1"><a></a>1690.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a>talks.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>].median()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One median for each session category.</p>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">1876.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">relief-society</td>
+<td style="text-align: right;">2000.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">1703.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-evening</td>
+<td style="text-align: right;">1765.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">1680.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">1569.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sunday-morning</td>
+<td style="text-align: right;">1739.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">1571.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">young-women</td>
+<td style="text-align: right;">1914.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<div class="question">
+<p>What reference group does each answer use?</p>
+</div>
+<aside class="notes">
+<p>Preserve the original overall-versus-grouped example and the reference-group question. Students already know an overall reduction. A talk may exceed the overall median while falling below its own session median. The group table displays all nine labeled median values.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="counts-and-proportions" class="slide level2">
+<h2>Counts and proportions</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a>talks[<span class="st">"session"</span>].value_counts()</span>
+<span id="cb13-2"><a></a></span>
+<span id="cb13-3"><a></a>talks[<span class="st">"session"</span>].value_counts(</span>
+<span id="cb13-4"><a></a>    normalize<span class="op">=</span><span class="va">True</span></span>
+<span id="cb13-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Count talks, then divide by the number of nonmissing session labels.</p>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">proportion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">0.214</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">151</td>
+<td style="text-align: right;">0.19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">0.178</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sunday-morning</td>
+<td style="text-align: right;">139</td>
+<td style="text-align: right;">0.175</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">0.131</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">0.063</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">relief-society</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">0.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">young-women</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">0.02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-evening</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.009</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<p>Here every session label is present, so the denominator is <strong>794 talks</strong>.</p>
+<aside class="notes">
+<p>The output table places the separately returned count and proportion Series together, with proportions rounded to three decimals for display. The fractions describe talks, not unique speakers. Counts sum to 794; the displayed rounded proportions need not sum to exactly one. Source: https://pandas.pydata.org/docs/reference/api/pandas.Series.value_counts.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-filter-changes-the-denominator" class="slide level2">
+<h2>A filter changes the denominator</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a>recent <span class="op">=</span> talks.loc[</span>
+<span id="cb14-2"><a></a>    talks[<span class="st">"year"</span>].between(<span class="dv">2018</span>, <span class="dv">2020</span>)</span>
+<span id="cb14-3"><a></a>].copy()</span>
+<span id="cb14-4"><a></a></span>
+<span id="cb14-5"><a></a>recent[<span class="st">"session"</span>].value_counts(</span>
+<span id="cb14-6"><a></a>    normalize<span class="op">=</span><span class="va">True</span></span>
+<span id="cb14-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The reference contains <strong>201 recent talks</strong>.</p>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">proportion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">0.229</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">0.204</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">0.194</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sunday-morning</td>
+<td style="text-align: right;">0.184</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">0.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">0.065</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-evening</td>
+<td style="text-align: right;">0.035</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<div class="question">
+<p>If we filter to Sunday morning before counting, what proportion belongs to Sunday morning?</p>
+</div>
+<aside class="notes">
+<p>Keep the denominator question as a quick verbal interaction. Expected one, because every remaining talk is Sunday morning. The output displays all seven recent categories. Fractions round to three decimals. Filtering changes the observations that contribute to a calculation.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="counting-rows-and-recorded-values" class="slide level2">
+<h2>Counting rows and recorded values</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a>talks.groupby(<span class="st">"session"</span>).size()</span>
+<span id="cb15-2"><a></a></span>
+<span id="cb15-3"><a></a>talks.groupby(<span class="st">"session"</span>)[<span class="st">"runtime"</span>].count()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>size()</code> counts talk rows.</p>
+<p><code>count()</code> counts recorded values.</p>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">n_talks</th>
+<th style="text-align: right;">n_recorded_runtimes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">relief-society</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">114</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-evening</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">151</td>
+<td style="text-align: right;">131</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">139</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sunday-morning</td>
+<td style="text-align: right;">139</td>
+<td style="text-align: right;">114</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">young-women</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">12</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<p>Across the whole table: <strong>794 talks, 663 recorded runtimes</strong>.</p>
+<aside class="notes">
+<p>The two returned Series appear side by side in the output table. There are 131 missing runtimes. No runtime parsing or repair is required. Count rows with size when the request asks how many observations there are. Session keys are complete; missing group keys would be excluded by default. Source: https://pandas.pydata.org/docs/user_guide/groupby.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="several-summaries-in-one-table" class="slide level2">
+<h2>Several summaries in one table</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a>session_summary <span class="op">=</span> (</span>
+<span id="cb16-2"><a></a>    talks.groupby(<span class="st">"session"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-3"><a></a>    .agg(</span>
+<span id="cb16-4"><a></a>        n_talks<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"size"</span>),</span>
+<span id="cb16-5"><a></a>        mean_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb16-6"><a></a>        median_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"median"</span>),</span>
+<span id="cb16-7"><a></a>    )</span>
+<span id="cb16-8"><a></a>    .sort_values(<span class="st">"median_words"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-9"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each named output specifies <strong>an input column and a summary operation</strong>.</p>
+<div class="result-table">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb17-1"><a></a>(9, 4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>as_index=False</code> keeps <code>session</code> as a column. The next slide displays all nine rows.</p>
+<aside class="notes">
+<p>Read one named aggregation aloud: create median_words by taking the median of num_words. size counts rows even if the selected value is missing. as_index=False keeps session as an ordinary column. The output names belong to the analyst, not the source data. Source: https://pandas.pydata.org/docs/user_guide/groupby.html#named-aggregation</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="session-summaries-in-the-talks-data" class="slide level2">
+<h2>Session summaries in the talks data</h2>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">n_talks</th>
+<th style="text-align: right;">mean_words</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">relief-society</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">2035.2</td>
+<td style="text-align: right;">2000.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">young-women</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">2020.6</td>
+<td style="text-align: right;">1914.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">1852.5</td>
+<td style="text-align: right;">1876.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-evening</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1568.4</td>
+<td style="text-align: right;">1765.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sunday-morning</td>
+<td style="text-align: right;">139</td>
+<td style="text-align: right;">1741.2</td>
+<td style="text-align: right;">1739.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">1689.7</td>
+<td style="text-align: right;">1703.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">151</td>
+<td style="text-align: right;">1663.4</td>
+<td style="text-align: right;">1680.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">1658.6</td>
+<td style="text-align: right;">1571.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">1549.7</td>
+<td style="text-align: right;">1569.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Counts describe how much data each median uses. Total words also depend on how many talks a category contains.</p>
+<div class="question">
+<p>Would ranking total words answer the same question as ranking median words?</p>
+</div>
+<aside class="notes">
+<p>This generated table replaces the manually typed results. Means display one decimal place. Ask whether ranking totals would answer the same question as ranking median length. It would not. Groups differ in number of observations, historical coverage, and speakers. This incorporates the earlier separate group-size discussion without removing its question.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="more-than-one-grouping-variable" class="slide level2">
+<h2>More than one grouping variable</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a>year_session <span class="op">=</span> (</span>
+<span id="cb18-2"><a></a>    talks.groupby(</span>
+<span id="cb18-3"><a></a>        [<span class="st">"year"</span>, <span class="st">"session"</span>], as_index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb18-4"><a></a>    )</span>
+<span id="cb18-5"><a></a>    .agg(n_talks<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"size"</span>),</span>
+<span id="cb18-6"><a></a>         median_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"median"</span>))</span>
+<span id="cb18-7"><a></a>)</span>
+<span id="cb18-8"><a></a>year_session.head(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">n_talks</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2010</td>
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">2073.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2010</td>
+<td style="text-align: left;">relief-society</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2030.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2010</td>
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">1853.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2010</td>
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">1483.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Full result shape:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb19-1"><a></a>(70, 4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<p>One row represents an <strong>observed year-session combination</strong>. Does every possible combination have to appear?</p>
+<aside class="notes">
+<p>Keep the two-key example and its prediction. The display is explicitly the first four rows, not the whole result. With ordinary text keys, groups arise from observed combinations. No rectangular grid is guaranteed. Avoid pivots or MultiIndex machinery today.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="prediction-filtering-order" class="slide level2">
+<h2>Prediction: filtering order</h2>
+<p>Using the six invented talks, compare:</p>
+<p><strong>A.</strong> Keep talks with at least 1,500 words, then calculate session medians.</p>
+<p><strong>B.</strong> Calculate session medians from all six talks, then keep sessions whose median is at least 1,500 words.</p>
+<div class="question">
+<p>What morning median does each analysis report? Which talks contribute?</p>
+</div>
+<aside class="notes">
+<p>Second conceptual pause. Give pairs 90 seconds. A uses only morning B and C, median 2500. B uses morning A, B, and C, median 2000. Afternoon disappears in both results for different reasons. Immediate answer follows.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-filter-changes-the-question" class="slide level2">
+<h2>The filter changes the question</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>A. Filter talk rows first</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a>long_toy <span class="op">=</span> toy.loc[toy[<span class="st">"num_words"</span>] <span class="op">&gt;=</span> <span class="dv">1500</span>]</span>
+<span id="cb20-2"><a></a>long_toy.groupby(<span class="st">"session"</span>, as_index<span class="op">=</span><span class="va">False</span>).agg(</span>
+<span id="cb20-3"><a></a>    median_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"median"</span>)</span>
+<span id="cb20-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2500.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div class="column" style="width:48%;">
+<p><strong>B. Summarize first</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>toy_summary.loc[</span>
+<span id="cb21-2"><a></a>    toy_summary[<span class="st">"median_words"</span>] <span class="op">&gt;=</span> <span class="dv">1500</span></span>
+<span id="cb21-3"><a></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<p>A uses talks B and C. B uses talks A, B, and C to calculate its median.</p>
+<aside class="notes">
+<p>Immediate debrief after the pair prediction. Both analyses keep only morning, but report 2500 and 2000 because the reference observations differ. Filtering observations changes the statistic. Filtering the summary selects groups. Both can be valid for their own question.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="prediction-a-group-reference-for-every-row" class="slide level2">
+<h2>Prediction: a group reference for every row</h2>
+<blockquote>
+<p>Which talks are longer than the median talk in their own session?</p>
+</blockquote>
+<p>Fill in the reference beside each talk before writing code.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk</th>
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+<th style="text-align: center;">session_median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1200</td>
+<td style="text-align: center;">?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1400</td>
+<td style="text-align: center;">?</td>
+</tr>
+</tbody>
+</table>
+<aside class="notes">
+<p>Allow 45 seconds, then ask a pair to explain the repeated values. The median for the row’s session should appear beside each row. Return immediately with the filled table.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="transformation-preserves-talk-rows" class="slide level2">
+<h2>Transformation preserves talk rows</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a>toy[<span class="st">"session_median_words"</span>] <span class="op">=</span> (</span>
+<span id="cb22-2"><a></a>    toy.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>].transform(<span class="st">"median"</span>)</span>
+<span id="cb22-3"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk</th>
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+<th style="text-align: right;">session_median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">2000.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">2000.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">morning</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: right;">2000.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">1200.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1200</td>
+<td style="text-align: right;">1200.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">afternoon</td>
+<td style="text-align: right;">1400</td>
+<td style="text-align: right;">1200.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<aside class="notes">
+<p>Immediate answer after the six-row prediction. Six values retain the original talk-row index. Group medians repeat beside their members. Ask which talks exceed the reference: C and F. Source: https://pandas.pydata.org/docs/user_guide/groupby.html#transformation</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="aggregation-and-transformation" class="slide level2">
+<h2>Aggregation and transformation</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Result unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">What is each session’s median?</td>
+<td style="text-align: left;"><code>.agg()</code> or <code>.median()</code></td>
+<td style="text-align: left;">One row per session</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">What is this talk’s session median?</td>
+<td style="text-align: left;"><code>.transform("median")</code></td>
+<td style="text-align: left;">One value per talk</td>
+</tr>
+</tbody>
+</table>
+<p>For the real dataset:</p>
+<ul>
+<li>Aggregation: 794 talk rows become 9 session rows.</li>
+<li>Transformation: 794 talk rows receive 794 aligned reference values.</li>
+</ul>
+<aside class="notes">
+<p>A short summary of the conceptual distinction. The next code block should now feel motivated. Do not define transform merely as another method to memorize. Source: https://pandas.pydata.org/docs/user_guide/groupby.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-comparison-within-each-session" class="slide level2">
+<h2>A comparison within each session</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a>talks[<span class="st">"session_median_words"</span>] <span class="op">=</span> (</span>
+<span id="cb23-2"><a></a>    talks.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>]</span>
+<span id="cb23-3"><a></a>    .transform(<span class="st">"median"</span>)</span>
+<span id="cb23-4"><a></a>)</span>
+<span id="cb23-5"><a></a>talks[<span class="st">"above_session_median"</span>] <span class="op">=</span> (</span>
+<span id="cb23-6"><a></a>    talks[<span class="st">"num_words"</span>]</span>
+<span id="cb23-7"><a></a>    <span class="op">&gt;</span> talks[<span class="st">"session_median_words"</span>]</span>
+<span id="cb23-8"><a></a>)</span>
+<span id="cb23-9"><a></a>above <span class="op">=</span> talks.loc[</span>
+<span id="cb23-10"><a></a>    talks[<span class="st">"above_session_median"</span>]</span>
+<span id="cb23-11"><a></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+<th style="text-align: right;">session_median_words</th>
+<th style="text-align: right;">above_session_median</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">1514</td>
+<td style="text-align: right;">1703.0</td>
+<td style="text-align: right;">False</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">1492</td>
+<td style="text-align: right;">1569.5</td>
+<td style="text-align: right;">False</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">1579</td>
+<td style="text-align: right;">1569.5</td>
+<td style="text-align: right;">True</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">1587</td>
+<td style="text-align: right;">1703.0</td>
+<td style="text-align: right;">False</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Four example rows from the transformed table.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb24-1"><a></a>395</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Talks qualify across all recorded years.</p>
+</div></div>
+<aside class="notes">
+<p>The four displayed rows are a labeled example excerpt, chosen to include True and False outcomes. They correspond to original positions 0, 2, 10, and 12. The final filtering uses the familiar Boolean mask. Strict greater-than excludes ties, so exactly half need not qualify. Every reference here uses the full time window.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="labels-explain-why-transform-helps" class="slide level2">
+<h2>Labels explain why transform helps</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a>medians <span class="op">=</span> talks.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>].median()</span>
+<span id="cb25-2"><a></a>reference <span class="op">=</span> talks.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>].transform(<span class="st">"median"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb26-1"><a></a>medians.index[:2]  = ['priesthood', 'relief-society']</span>
+<span id="cb26-2"><a></a>reference.index[:2] = [0, 1]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>medians</code> has <strong>session labels</strong>. <code>reference</code> has <strong>talk-row labels</strong>.</p>
+<p>Column assignment aligns index labels. Transformation provides the labels needed for the talk table.</p>
+<aside class="notes">
+<p>Relate this to the Ana/Bo bonus alignment example in foundations. The printed first two labels make the mismatch visible. Directly assigning the group-indexed Series would align session strings with integer row labels and introduce missing values here. Do not require a join for this task.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-reference-group-includes-the-time-window" class="slide level2">
+<h2>The reference group includes the time window</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>recent <span class="op">=</span> talks.loc[</span>
+<span id="cb27-2"><a></a>    talks[<span class="st">"year"</span>].between(<span class="dv">2018</span>, <span class="dv">2020</span>)</span>
+<span id="cb27-3"><a></a>].copy()</span>
+<span id="cb27-4"><a></a>recent[<span class="st">"session_median_words"</span>] <span class="op">=</span> (</span>
+<span id="cb27-5"><a></a>    recent.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>]</span>
+<span id="cb27-6"><a></a>    .transform(<span class="st">"median"</span>)</span>
+<span id="cb27-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+<th style="text-align: right;">session_median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">1514</td>
+<td style="text-align: right;">1629.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">1629.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">1492</td>
+<td style="text-align: right;">1621.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>First three recent talk rows.</p>
+</div></div>
+<div class="question">
+<p>How would the comparison change if we calculated the reference before filtering years?</p>
+</div>
+<aside class="notes">
+<p>Keep the reference-window interaction. The reference values use only 2018-2020 observations. Before filtering years, the reference would use all recorded years. The final task requires the recent reference. The displayed table is an excerpt of a 201-row transformed result.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="dates-provide-time-variables" class="slide level2">
+<h2>Dates provide time variables</h2>
+<p>The CSV stores dates as text, such as <code>2020-10-03 00:00:00.000</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>talks[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(</span>
+<span id="cb28-2"><a></a>    talks[<span class="st">"date"</span>], <span class="bu">format</span><span class="op">=</span><span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st"> %H:%M:%S.</span><span class="sc">%f</span><span class="st">"</span></span>
+<span id="cb28-3"><a></a>)</span>
+<span id="cb28-4"><a></a>talks[<span class="st">"talk_year"</span>] <span class="op">=</span> talks[<span class="st">"date"</span>].dt.year</span>
+<span id="cb28-5"><a></a>talks[<span class="st">"talk_month"</span>] <span class="op">=</span> talks[<span class="st">"date"</span>].dt.month</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">date</th>
+<th style="text-align: right;">talk_year</th>
+<th style="text-align: right;">talk_month</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2020-10-03</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2020-10-03</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2020-10-04</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>First three rows. <code>.dt</code> extracts components from the datetime Series.</p>
+<aside class="notes">
+<p>The displayed dates omit midnight times for readability but the underlying converted values are datetimes. Date format tokens represent year, month, day, hour, minute, second, and fractional second. Derived years match the provided year column. Do not invent conference dates or add coercion by default. Source: https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-yearly-summary" class="slide level2">
+<h2>A yearly summary</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>annual <span class="op">=</span> (</span>
+<span id="cb29-2"><a></a>    talks.groupby(<span class="st">"talk_year"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb29-3"><a></a>    .agg(n_talks<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"size"</span>),</span>
+<span id="cb29-4"><a></a>         median_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"median"</span>))</span>
+<span id="cb29-5"><a></a>    .sort_values(<span class="st">"talk_year"</span>)</span>
+<span id="cb29-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One row represents one year of recorded talks.</p>
+</div><div class="column" style="width:48%;">
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;">talk_year</th>
+<th style="text-align: right;">n_talks</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2010</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1853.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2011</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1844.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2012</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1768.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1711.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2014</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1651.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2015</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">1630.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2016</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">1684.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">1722.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">1650.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2019</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">1652.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">1629.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<aside class="notes">
+<p>Show all eleven years. Chronological order uses the numeric year rather than alphabetic conference text. Each point in the later line plot comes from one row here. Membership of the collection can differ across years. No resampling or time-series index is needed.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-bar-chart-of-group-medians" class="slide level2">
+<h2>A bar chart of group medians</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb30-2"><a></a></span>
+<span id="cb30-3"><a></a>ordered <span class="op">=</span> session_summary.sort_values(</span>
+<span id="cb30-4"><a></a>    <span class="st">"median_words"</span></span>
+<span id="cb30-5"><a></a>)</span>
+<span id="cb30-6"><a></a>ax <span class="op">=</span> ordered.plot.barh(</span>
+<span id="cb30-7"><a></a>    x<span class="op">=</span><span class="st">"session"</span>, y<span class="op">=</span><span class="st">"median_words"</span>,</span>
+<span id="cb30-8"><a></a>    legend<span class="op">=</span><span class="va">False</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="fl">5.5</span>)</span>
+<span id="cb30-9"><a></a>)</span>
+<span id="cb30-10"><a></a>ax.set_xlabel(<span class="st">"Median word count"</span>)</span>
+<span id="cb30-11"><a></a>ax.set_ylabel(<span class="st">"Session"</span>)</span>
+<span id="cb30-12"><a></a>ax.set_title(<span class="st">"Typical talk length by session"</span>)</span>
+<span id="cb30-13"><a></a>plt.tight_layout()</span>
+<span id="cb30-14"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:48%;">
+<div class="plot-image">
+<p><img data-src="figures/session-medians.png" alt="Median word counts by session category." height="510"></p>
+</div>
+</div></div>
+<p><code>.plot.barh()</code> returns a Matplotlib Axes. Ascending order places the largest horizontal bar at the top.</p>
+<aside class="notes">
+<p>This single code-and-figure slide combines the earlier plotting introduction, output slide, and formatting slide. The plotted values are generated from the same summary table. Matplotlib must be installed. The script sets cosmetic fonts and colors for presentation, while the shown commands supply the data, order, labels, and title. One bar represents one category. Preserve the question about what the bar represents. Source: https://pandas.pydata.org/docs/user_guide/visualization.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-bar-chart-can-display-counts" class="slide level2">
+<h2>A bar chart can display counts</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a></a>talks[<span class="st">"session"</span>].value_counts().sort_values().plot.barh()</span>
+<span id="cb31-2"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="plot-image">
+<p><img data-src="figures/session-counts.png" alt="Horizontal bars showing the number of recorded talks in each session category." height="440"></p>
+</div>
+<aside class="notes">
+<p>This is a Series plot, so its index supplies category labels. Ask why the ranking differs from the median chart. A count measures frequency, a median measures typical length. The plotted version in the script adds axis labels, a title, and a larger figure size. Source: https://pandas.pydata.org/docs/user_guide/visualization.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-line-chart-over-time" class="slide level2">
+<h2>A line chart over time</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a></a>annual.plot.line(</span>
+<span id="cb32-2"><a></a>    x<span class="op">=</span><span class="st">"talk_year"</span>, y<span class="op">=</span><span class="st">"median_words"</span>, marker<span class="op">=</span><span class="st">"o"</span>, legend<span class="op">=</span><span class="va">False</span></span>
+<span id="cb32-3"><a></a>)</span>
+<span id="cb32-4"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="plot-image">
+<p><img data-src="figures/yearly-medians.png" alt="A line showing yearly median word counts from 2010 through 2020." height="440"></p>
+</div>
+<aside class="notes">
+<p>Chronological order makes a line meaningful. A plotted point summarizes one year’s recorded talks. Ask whether the graph follows the same talk or speaker over time. No.&nbsp;The membership of each year’s collection can change. Source: https://pandas.pydata.org/docs/user_guide/visualization.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="a-histogram-of-individual-talk-lengths" class="slide level2">
+<h2>A histogram of individual talk lengths</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a></a>talks[<span class="st">"num_words"</span>].plot.hist(bins<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb33-2"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="plot-image">
+<p><img data-src="figures/word-counts.png" alt="Histogram of word counts for the 794 recorded talks." height="440"></p>
+</div>
+<aside class="notes">
+<p>A histogram uses individual numeric values, while a categorical bar chart uses values attached to named groups. A histogram bar counts observations in a numeric interval. Changing bins changes the display, not the observations. Source: https://pandas.pydata.org/docs/user_guide/visualization.html</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="plot-choice-follows-the-question" class="slide level2">
+<h2>Plot choice follows the question</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">Starting table</th>
+<th style="text-align: left;">pandas method</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">How do session medians compare?</td>
+<td style="text-align: left;">Group summary</td>
+<td style="text-align: left;"><code>.plot.barh()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">How do yearly medians change?</td>
+<td style="text-align: left;">Chronological summary</td>
+<td style="text-align: left;"><code>.plot.line()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">How are individual word counts distributed?</td>
+<td style="text-align: left;">Talk-level Series</td>
+<td style="text-align: left;"><code>.plot.hist()</code></td>
+</tr>
+</tbody>
+</table>
+<div class="question">
+<p>What does one bar or point represent in each display?</p>
+</div>
+<aside class="notes">
+<p>Quick plotting debrief. Students should explain unit and axis meaning before adding colors. This table is a reference they can use during the activity. Do not expand into a full visualization lecture.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-worksheet-and-pair-activity" class="slide level2">
+<h2>The worksheet and pair activity</h2>
+<p>The slide examples already include their results. You can follow the analysis here.</p>
+<p>For the pair activity, open <strong>checkpoint 6</strong> in:</p>
+<ul>
+<li><code>activity/pandas-questions.qmd</code>, or</li>
+<li><code>activity/pandas-questions.ipynb</code></li>
+</ul>
+<p>Use the project’s <code>.venv</code> interpreter. Earlier checkpoints remain available for practice and recovery.</p>
+<aside class="notes">
+<p>Arrange download, fork/clone, and uv sync before class or during arrival. Do not switch between slide presentation and live code for every example. Make one switch when students begin independent pair work. Checkpoints 0-5 remain in the worksheets with every original example; checkpoint 1 now includes GroupBy inspection. Give the main activity time to checkpoint 6 rather than repeating the entire guided worksheet in class.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-final-request" class="slide level2">
+<h2>The final request</h2>
+<blockquote>
+<p>For recorded talks from 2018 through 2020, compare median word counts across session categories. Report counts and retain categories with at least ten talks. Order the result by median word count and make a bar chart.</p>
+</blockquote>
+<p>Then identify talks in those categories that exceed <strong>their own session’s median among the 2018-2020 talks</strong>.</p>
+<p>Write one sentence interpreting the summary and one limitation.</p>
+<aside class="notes">
+<p>Allow about 12 minutes for the final request, with brief progress pauses. The ten-talk condition is part of the request and is not a promise of statistical reliability. Use the recent time window for both the aggregate and the transformed reference. Above-median results should include only the qualifying categories.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-analysis-decisions" class="slide level2">
+<h2>The analysis decisions</h2>
+<p>Before coding, explain:</p>
+<ul>
+<li>Which rows define the reference data?</li>
+<li>What variables define a group?</li>
+<li>Which condition applies to talk rows?</li>
+<li>Which condition applies to summary rows?</li>
+<li>How will group information return to individual talks?</li>
+</ul>
+<aside class="notes">
+<p>Give pairs one minute of the activity time for this plan. Expected: filter year first, group by session, aggregate n_talks and median_words, filter group counts after aggregation, sort the summary, transform medians on recent talks, use a mask that combines eligible-session membership and above-median status.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="debrief-the-session-summary" class="slide level2">
+<h2>Debrief: the session summary</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a></a>recent <span class="op">=</span> talks.loc[talks[<span class="st">"year"</span>].between(<span class="dv">2018</span>, <span class="dv">2020</span>)].copy()</span>
+<span id="cb34-2"><a></a></span>
+<span id="cb34-3"><a></a>summary <span class="op">=</span> (</span>
+<span id="cb34-4"><a></a>    recent.groupby(<span class="st">"session"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb34-5"><a></a>    .agg(n_talks<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"size"</span>),</span>
+<span id="cb34-6"><a></a>         median_words<span class="op">=</span>(<span class="st">"num_words"</span>, <span class="st">"median"</span>))</span>
+<span id="cb34-7"><a></a>)</span>
+<span id="cb34-8"><a></a></span>
+<span id="cb34-9"><a></a>eligible <span class="op">=</span> (</span>
+<span id="cb34-10"><a></a>    summary.loc[summary[<span class="st">"n_talks"</span>] <span class="op">&gt;=</span> <span class="dv">10</span>]</span>
+<span id="cb34-11"><a></a>    .sort_values(<span class="st">"median_words"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb34-12"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<aside class="notes">
+<p>Immediate activity debrief begins after students attempt the task. Have a pair explain each filter’s location before showing the code. The first filter changes which observations contribute to the statistics. The second filter selects categories using their observed group size.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="debrief-the-completed-summary" class="slide level2">
+<h2>Debrief: the completed summary</h2>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">n_talks</th>
+<th style="text-align: right;">median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">sunday-morning</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">1790.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">1728.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">saturday-afternoon</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">1629.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">1621.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">priesthood</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">1554.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">1480.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>201 recent talk rows become 6 qualifying session rows.</strong></p>
+<p>The retained counts sum to 194. Seven Saturday evening talks belong to a category below the requested threshold.</p>
+<aside class="notes">
+<p>Keep the full activity debrief. Counts before group filtering sum to 201. After filtering categories, counts sum to 194. This is expected. The ten-talk threshold is a task condition rather than a reliability guarantee. Results come from the completed analysis.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="debrief-a-plot-of-the-answer" class="slide level2">
+<h2>Debrief: a plot of the answer</h2>
+<div class="plot-image">
+<p><img data-src="figures/activity-medians.png" alt="Bar chart of session median word counts for six categories with at least ten talks from 2018 through 2020."></p>
+</div>
+<aside class="notes">
+<p>Ask a pair to read one bar in a sentence that includes the time window, statistic, and observational unit. Example: among recorded 2018-2020 Sunday morning talks, the median word count is 1790. Different categories have different counts and may contain different speakers and conference compositions.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="debrief-individual-talks-with-a-group-reference" class="slide level2">
+<h2>Debrief: individual talks with a group reference</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a></a>recent[<span class="st">"session_median_words"</span>] <span class="op">=</span> (</span>
+<span id="cb35-2"><a></a>    recent.groupby(<span class="st">"session"</span>)[<span class="st">"num_words"</span>].transform(<span class="st">"median"</span>)</span>
+<span id="cb35-3"><a></a>)</span>
+<span id="cb35-4"><a></a>mask <span class="op">=</span> (</span>
+<span id="cb35-5"><a></a>    recent[<span class="st">"session"</span>].isin(eligible[<span class="st">"session"</span>])</span>
+<span id="cb35-6"><a></a>    <span class="op">&amp;</span> (recent[<span class="st">"num_words"</span>] <span class="op">&gt;</span> recent[<span class="st">"session_median_words"</span>])</span>
+<span id="cb35-7"><a></a>)</span>
+<span id="cb35-8"><a></a>above <span class="op">=</span> recent.loc[mask]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="result-table">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">talk_name</th>
+<th style="text-align: left;">session</th>
+<th style="text-align: right;">num_words</th>
+<th style="text-align: right;">session_median_words</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Answers to Prayer</td>
+<td style="text-align: left;">saturday-morning</td>
+<td style="text-align: right;">2141</td>
+<td style="text-align: right;">1728.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Divine Discontent</td>
+<td style="text-align: left;">womens</td>
+<td style="text-align: right;">1631</td>
+<td style="text-align: right;">1480.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wilt Thou Be Made Whole?</td>
+<td style="text-align: left;">sunday-afternoon</td>
+<td style="text-align: right;">1639</td>
+<td style="text-align: right;">1621.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>First three qualifying talks. The complete result contains <strong>95 talks</strong>.</p>
+<aside class="notes">
+<p>Preserve the talk-level debrief and show a real excerpt beside the reference. The transformed intermediate contains 201 rows. The strict comparison in eligible categories yields 95 talks. Ties and odd group sizes mean exactly half need not qualify. The output shows session and reference so students can visibly check the comparison.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="interpretation-and-limits" class="slide level2">
+<h2>Interpretation and limits</h2>
+<blockquote>
+<p>Among categories with at least ten recorded talks from 2018 through 2020, Sunday morning has the largest median word count, at 1,790 words.</p>
+</blockquote>
+<p>This describes the supplied talks. It does not establish that the session itself causes longer talks.</p>
+<div class="question">
+<p>What information would you need before making a broader claim?</p>
+</div>
+<aside class="notes">
+<p>Expected: completeness and selection of talks, speaker composition, changes in conference/session formats, and a clear target population. Keep this to descriptive reasoning rather than formal causal methods. The counts-and-reference habit should transfer to later wrangling lessons.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="exit-check" class="slide level2">
+<h2>Exit check</h2>
+<p>For each request, choose the operation and state the result unit.</p>
+<ol type="1">
+<li>Report the number of talks and median word count for each speaker.</li>
+<li>Add each speaker’s median word count beside every talk they gave.</li>
+<li>Compare the median word count across years in a figure.</li>
+<li>Keep only speakers with at least five recorded talks.</li>
+</ol>
+<aside class="notes">
+<p>Give students one minute. Expected: groupby speaker with agg gives speaker rows; groupby speaker with transform gives talk rows; a chronologically sorted yearly summary with plot.line gives yearly points; filtering n_talks after aggregation gives qualifying speaker rows. The final slide is the immediate answer.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="exit-check-the-reasoning" class="slide level2">
+<h2>Exit check: the reasoning</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Request</th>
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Result unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Count and median for each speaker</td>
+<td style="text-align: left;"><code>groupby("speaker").agg(...)</code></td>
+<td style="text-align: left;">Speaker</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Speaker median beside every talk</td>
+<td style="text-align: left;"><code>.transform("median")</code></td>
+<td style="text-align: left;">Talk</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Median length across years</td>
+<td style="text-align: left;">Yearly aggregation and <code>.plot.line()</code></td>
+<td style="text-align: left;">Year</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Speakers with at least five talks</td>
+<td style="text-align: left;">Filter the group summary</td>
+<td style="text-align: left;">Speaker</td>
+</tr>
+</tbody>
+</table>
+<div class="takeaway">
+<p>A clear pandas analysis keeps the question, the reference data, and the meaning of each row connected.</p>
+</div>
+<aside class="notes">
+<p>End with the habit rather than a catalog of methods. The next wrangling lessons will change table structure and combine tables, making the meaning of a row even more important. No joins, pivots, or missingness theory are required to answer today’s questions.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>STAT 386: Answering questions with pandas</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1600,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.5e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

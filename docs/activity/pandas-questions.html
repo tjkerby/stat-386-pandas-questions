@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Answering questions with pandas: Student activity</title><link rel="stylesheet" href="../site_libs/site.css"></head><body><nav><a href="../index.html">STAT 386</a><a href="../slides/pandas-questions.html">Slides</a><a href="../activity/pandas-questions.html">Activity</a><a href="../activity/pandas-questions-complete.html">Completed activity</a></nav><main><h1>Answering questions with pandas: Student activity</h1><h2 id="purpose-and-setup">Purpose and setup</h2>
+<p>Read and write pandas pipelines, summarize groups, attach group references to talks, and make plots. Before each operation, predict what one row of its result will represent. Work with a partner and explain the question before writing code.</p>
+<p>Run the cells in Positron using the project’s <code>.venv</code> Python interpreter.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>talks <span class="op">=</span> pd.read_csv(<span class="st">&quot;../data/talks.csv&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>talks.shape</span></code></pre></div>
+<p>Check that the initial table has 794 talk rows and 14 columns.</p>
+<h2 id="checkpoint-0-review-familiar-pipelines">Checkpoint 0: Review familiar pipelines</h2>
+<h3 id="decode-the-code">Decode the code</h3>
+<p>Without running it, describe the question this code answers. Predict the result type and shape. Explain what changes if <code>head(3)</code> comes before sorting.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>decoded <span class="op">=</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    talks.loc[</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        (talks[<span class="st">&quot;year&quot;</span>] <span class="op">==</span> <span class="dv">2020</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;</span> (talks[<span class="st">&quot;session&quot;</span>] <span class="op">==</span> <span class="st">&quot;sunday-morning&quot;</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;talk_name&quot;</span>, <span class="st">&quot;speaker&quot;</span>, <span class="st">&quot;num_words&quot;</span>]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">&quot;num_words&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    .head(<span class="dv">3</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>decoded</span></code></pre></div>
+<h3 id="construct-the-code">Construct the code</h3>
+<p>Find the three Saturday morning talks from 2019 or 2020 with the largest word counts. Show the title, speaker, year, and word count. Use named steps or a chain.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Define the row conditions.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Select the requested columns, order the rows, and keep three.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Check one property of the answer.</span></span></code></pre></div>
+<h2 id="checkpoint-1-predict-aggregation-and-transformation">Checkpoint 1: Predict aggregation and transformation</h2>
+<p>These six talks are invented so you can inspect the arithmetic.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>toy <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;talk&quot;</span>: <span class="bu">list</span>(<span class="st">&quot;ABCDEF&quot;</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;session&quot;</span>: [<span class="st">&quot;morning&quot;</span>] <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> [<span class="st">&quot;afternoon&quot;</span>] <span class="op">*</span> <span class="dv">3</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;num_words&quot;</span>: [<span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">3000</span>, <span class="dv">1000</span>, <span class="dv">1200</span>, <span class="dv">1400</span>],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>toy</span></code></pre></div>
+<p>Sketch a table with the median word count for each session. How many rows does it have? Does it still identify talk C?</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use groupby and a median to create toy_summary.</span></span></code></pre></div>
+<h3 id="inspect-the-groupby-object">Inspect the GroupBy object</h3>
+<p>Create <code>grouped = toy.groupby("session")</code>. Inspect <code>grouped.ngroups</code> and <code>grouped.indices</code>, then request <code>grouped.get_group("morning")</code>. Explain which rows belong to each group and whether the original table still has six rows.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create the GroupBy, inspect its membership, and extract morning.</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Check grouped.obj is toy and len(toy).</span></span></code></pre></div>
+<p>Now sketch the original six rows with an extra column containing each talk’s session median. Use <code>transform("median")</code> to create that column.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Add session_median_words beside each original toy talk.</span></span></code></pre></div>
+<p>Compare two analyses on paper, then check them in code:</p>
+<ol type="1">
+<li>Keep talks with at least 1,500 words, then calculate session medians.</li>
+<li>Calculate medians from all six talks, then keep sessions whose median is at least 1,500 words.</li>
+</ol>
+<p>Which observations determine the morning median in each analysis?</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Build each pipeline and compare the reported medians.</span></span></code></pre></div>
+<h2 id="checkpoint-2-counts-proportions-and-recorded-values">Checkpoint 2: Counts, proportions, and recorded values</h2>
+<p>Count recorded talks by session, then calculate the proportion in each category. Use <code>value_counts()</code> with and without <code>normalize=True</code>. State the denominator.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create session_counts and session_proportions.</span></span></code></pre></div>
+<p>Compare <code>size()</code> with <code>count()</code> on the runtime column. Why do they differ? Do not parse or repair runtime values today.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create a session table with n_talks and n_recorded_runtimes.</span></span></code></pre></div>
+<h2 id="checkpoint-3-grouped-summaries">Checkpoint 3: Grouped summaries</h2>
+<p>Create <code>session_summary</code> with one row per session category and these columns: <code>session</code>, <code>n_talks</code>, <code>mean_words</code>, and <code>median_words</code>. Keep the grouping variable as a column with <code>as_index=False</code>. Order by decreasing median word count.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use named aggregation and sort_values.</span></span></code></pre></div>
+<p>How many rows should the result have? Why include group size beside the median?</p>
+<p>Group by both year and session, keeping counts and medians. What does a row now represent? Must every possible combination occur?</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create year_session using two grouping keys.</span></span></code></pre></div>
+<h2 id="checkpoint-4-a-group-reference-beside-each-talk">Checkpoint 4: A group reference beside each talk</h2>
+<p>Add <code>session_median_words</code> to the talks table using a grouped transformation. Then add <code>above_session_median</code>, a Boolean column. Select talks for which it is true. Inspect a few titles, sessions, counts, and reference values.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Transform the session median back to talk rows.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Compare word counts with the reference and apply the mask.</span></span></code></pre></div>
+<p>How many rows does the transformed intermediate retain? Why would directly assigning a session-indexed summary Series cause a label-alignment problem?</p>
+<h2 id="checkpoint-5-dates-and-pandas-plots">Checkpoint 5: Dates and pandas plots</h2>
+<p>Convert the date column to datetime using the supplied format, then derive <code>talk_year</code> with <code>.dt.year</code>. Check it against the existing year column.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use pd.to_datetime with format=&quot;%Y-%m-%d %H:%M:%S.%f&quot;.</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Add talk_year and check it against year.</span></span></code></pre></div>
+<p>Create <code>annual</code> with counts and median word counts by derived year. Sort years chronologically.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create the yearly summary.</span></span></code></pre></div>
+<p>Use pandas plotting methods to make the following displays. Add meaningful axis labels. Use <code>plt.tight_layout()</code> and <code>plt.show()</code> after each figure.</p>
+<ul>
+<li>A horizontal bar chart of session median word counts.</li>
+<li>A horizontal bar chart of session counts.</li>
+<li>A line chart of yearly median word counts.</li>
+<li>A histogram of individual word counts.</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use .plot.barh(x=&quot;session&quot;, y=&quot;median_words&quot;, legend=False).</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Plot the session_counts Series with .plot.barh().</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use .plot.line(x=&quot;talk_year&quot;, y=&quot;median_words&quot;, marker=&quot;o&quot;).</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Use .plot.hist(bins=20) on the num_words Series.</span></span></code></pre></div>
+<p>State what one bar or point represents in each figure.</p>
+<h2 id="checkpoint-6-final-request">Checkpoint 6: Final request</h2>
+<p>For recorded talks from 2018 through 2020:</p>
+<ol type="1">
+<li>Compare median word counts across session categories and report counts.</li>
+<li>Retain categories with at least ten talks and order by median word count.</li>
+<li>Make a bar chart of that summary.</li>
+<li>Identify talks in the retained categories that exceed their own session’s median <strong>calculated from the 2018-2020 talks</strong>.</li>
+<li>Write one interpretation and one limitation.</li>
+</ol>
+<h3 id="your-plan">Your plan</h3>
+<p>Explain which conditions apply before aggregation and which apply afterward. State the result unit at each step. The ten-talk threshold is a condition in the request, not a guarantee that a comparison establishes a general conclusion.</p>
+<h3 id="your-code">Your code</h3>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create an independent recent table containing 2018-2020 talks.</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Calculate recent_summary with n_talks and median_words.</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create eligible by filtering counts and sorting medians.</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Plot the eligible summary with clear labels.</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Recalculate each session reference using only recent talks.</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Select above_recent with both eligible-session membership and</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#       a strict greater-than comparison with the session median.</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Show title, speaker, session, year, word count, and reference.</span></span></code></pre></div>
+<h3 id="your-checks-and-interpretation">Your checks and interpretation</h3>
+<p>Check that group counts account for the recent observations before filtering groups. Confirm that every final talk has an allowed year, belongs to an eligible category, and exceeds its reference. Explain why filtering categories reduces the total number of talks represented in the retained summary.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Write meaningful checks for the final results.</span></span></code></pre></div>
+<p>Write one sentence about the summary and one limitation on what it tells us.</p>
+<h2 id="recovery-and-reference">Recovery and reference</h2>
+<p>After attempting a checkpoint, compare your reasoning with the <a href="pandas-questions-complete.html">completed activity</a>.</p>
+<p>The lecture ends with an exit check that distinguishes speaker summaries, speaker references attached to talks, and yearly plots.</p>
+</main></body></html>

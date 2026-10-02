@@ -1,0 +1,11 @@
+| session | n_talks | mean_words | median_words |
+| :-- | --: | --: | --: |
+| relief-society | 16 | 2035.2 | 2000.5 |
+| young-women | 16 | 2020.6 | 1914.5 |
+| priesthood | 104 | 1852.5 | 1876.0 |
+| saturday-evening | 7 | 1568.4 | 1765.0 |
+| sunday-morning | 139 | 1741.2 | 1739.0 |
+| saturday-afternoon | 141 | 1689.7 | 1703.0 |
+| saturday-morning | 151 | 1663.4 | 1680.0 |
+| womens | 50 | 1658.6 | 1571.0 |
+| sunday-afternoon | 170 | 1549.7 | 1569.5 |

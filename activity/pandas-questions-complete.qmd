@@ -1,0 +1,430 @@
+---
+title: "Answering questions with pandas: Completed activity"
+author: "STAT 386"
+format:
+  html:
+    toc: true
+    code-fold: false
+execute:
+  echo: true
+  warning: true
+jupyter: python3
+---
+
+## Purpose and setup
+
+Read and write pandas pipelines, summarize groups, attach group references to
+talks, and make plots. Equivalent code can be correct when it answers the same
+question. Every claim below describes the supplied dataset.
+
+Run this file from its own directory in Positron. The relative path reflects
+the file's location inside `activity/`.
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+talks = pd.read_csv("../data/talks.csv")
+talks.shape
+```
+
+One row represents one talk. The initial shape is `(794, 14)`.
+
+## Checkpoint 0: Review familiar pipelines
+
+### Decode the code
+
+Before running, describe the question this code answers. Predict its type and
+shape, and explain why sorting precedes `head(3)`.
+
+```{python}
+decoded = (
+    talks.loc[
+        (talks["year"] == 2020)
+        & (talks["session"] == "sunday-morning"),
+        ["talk_name", "speaker", "num_words"]
+    ]
+    .sort_values("num_words", ascending=False)
+    .head(3)
+)
+decoded
+```
+
+The result is a three-row, three-column DataFrame containing the three Sunday
+morning talks from 2020 with the largest word counts. Taking `head(3)` before
+sorting would restrict the candidates before finding the largest counts.
+
+### Construct the code
+
+Find the three Saturday morning talks from 2019 or 2020 with the largest word
+counts. Show the title, speaker, year, and word count.
+
+```{python}
+review_mask = (
+    talks["year"].between(2019, 2020)
+    & (talks["session"] == "saturday-morning")
+)
+
+review_answer = (
+    talks.loc[review_mask, ["talk_name", "speaker", "year", "num_words"]]
+    .sort_values("num_words", ascending=False)
+    .head(3)
+)
+review_answer
+```
+
+```{python}
+review_checks = {
+    "three_rows": len(review_answer) == 3,
+    "allowed_years": review_answer["year"].isin([2019, 2020]).all(),
+    "correct_session": talks.loc[review_answer.index, "session"].eq(
+        "saturday-morning"
+    ).all(),
+    "decreasing_word_count": review_answer["num_words"].is_monotonic_decreasing,
+}
+review_checks
+```
+
+## Checkpoint 1: Predict aggregation and transformation
+
+The following talks are invented to make the calculations visible.
+
+```{python}
+toy = pd.DataFrame({
+    "talk": list("ABCDEF"),
+    "session": ["morning"] * 3 + ["afternoon"] * 3,
+    "num_words": [1000, 2000, 3000, 1000, 1200, 1400],
+})
+toy
+```
+
+Predict how many rows remain after calculating session medians.
+
+```{python}
+toy_summary = toy.groupby("session", as_index=False).agg(
+    median_words=("num_words", "median")
+)
+toy_summary
+```
+
+Two rows represent two sessions. The original talk identities are absent.
+
+### Inspect the GroupBy object
+
+```{python}
+grouped = toy.groupby("session")
+print(type(grouped).__name__, grouped.ngroups)
+grouped.indices
+```
+
+The mapping associates each group key with row positions: afternoon uses 3, 4,
+and 5, while morning uses 0, 1, and 2. Creating a GroupBy specifies the grouping.
+Inspection and calculations request the grouping work when they need it.
+
+```{python}
+grouped.get_group("morning")
+```
+
+```{python}
+grouped.obj is toy, len(toy)
+```
+
+The GroupBy keeps the source object. Extracting a group leaves the original
+six-row table intact. Selecting a column and requesting a reduction determines
+what to calculate for each group.
+
+Predict the values that should appear beside each original talk.
+
+```{python}
+toy["session_median_words"] = (
+    toy.groupby("session")["num_words"].transform("median")
+)
+toy
+```
+
+Six rows still represent six talks. Morning talks receive 2,000 and afternoon
+talks receive 1,200 as their reference values.
+
+### Filtering order
+
+Compare filtering talk rows before calculating medians with filtering the
+summary after calculating medians.
+
+```{python}
+long_toy = toy.loc[toy["num_words"] >= 1500]
+
+filter_first = long_toy.groupby("session", as_index=False).agg(
+    median_words=("num_words", "median")
+)
+
+summarize_first = toy_summary.loc[toy_summary["median_words"] >= 1500]
+
+print("Filter talk rows first:")
+print(filter_first.to_string(index=False))
+print("\nSummarize first:")
+print(summarize_first.to_string(index=False))
+```
+
+The first analysis reports a morning median of 2,500 based on B and C. The
+second reports a morning median of 2,000 based on A, B, and C. The pipelines
+use different observations to calculate the statistic.
+
+## Checkpoint 2: Counts, proportions, and recorded values
+
+```{python}
+session_counts = talks["session"].value_counts()
+session_counts
+```
+
+```{python}
+session_proportions = talks["session"].value_counts(normalize=True)
+session_proportions
+```
+
+Every session label is present, so these proportions use 794 talks as the
+denominator. They describe talks rather than unique speakers.
+
+```{python}
+availability = talks.groupby("session", as_index=False).agg(
+    n_talks=("runtime", "size"),
+    n_recorded_runtimes=("runtime", "count"),
+)
+availability
+```
+
+There are 794 talk rows and 663 recorded runtimes. `size` counts observations,
+while `count` counts nonmissing values of a variable. Missingness repair belongs
+to a later lesson.
+
+## Checkpoint 3: Grouped summaries
+
+```{python}
+session_summary = (
+    talks.groupby("session", as_index=False)
+    .agg(
+        n_talks=("num_words", "size"),
+        mean_words=("num_words", "mean"),
+        median_words=("num_words", "median"),
+    )
+    .sort_values("median_words", ascending=False)
+)
+session_summary.round(1)
+```
+
+Nine rows represent nine session categories. Group sizes help us interpret the
+summaries. A total word count would combine talk length and the number of talks.
+
+```{python}
+year_session = (
+    talks.groupby(["year", "session"], as_index=False)
+    .agg(n_talks=("num_words", "size"),
+         median_words=("num_words", "median"))
+)
+year_session.head()
+```
+
+Each row represents an observed year-session combination. The table does not
+require every possible combination to occur.
+
+## Checkpoint 4: A group reference beside each talk
+
+```{python}
+talks["session_median_words"] = (
+    talks.groupby("session")["num_words"].transform("median")
+)
+talks["above_session_median"] = (
+    talks["num_words"] > talks["session_median_words"]
+)
+
+talks[["talk_name", "session", "num_words", "session_median_words",
+       "above_session_median"]].head()
+```
+
+```{python}
+above_all_years = talks.loc[talks["above_session_median"]]
+len(talks), len(above_all_years)
+```
+
+The transformed column retains the original talk-row index. A strict
+greater-than comparison excludes ties, so the number above a median need not be
+exactly half of a group. This reference currently uses all years in the data.
+
+## Checkpoint 5: Dates and pandas plots
+
+### Date components and a yearly summary
+
+```{python}
+talks["date"] = pd.to_datetime(
+    talks["date"], format="%Y-%m-%d %H:%M:%S.%f"
+)
+talks["talk_year"] = talks["date"].dt.year
+
+annual = (
+    talks.groupby("talk_year", as_index=False)
+    .agg(n_talks=("num_words", "size"),
+         median_words=("num_words", "median"))
+    .sort_values("talk_year")
+)
+annual
+```
+
+Eleven rows represent eleven years of recorded talks.
+
+### A bar chart of session medians
+
+```{python}
+ax = session_summary.sort_values("median_words").plot.barh(
+    x="session", y="median_words", legend=False, figsize=(9, 5)
+)
+ax.set_xlabel("Median word count")
+ax.set_ylabel("Session")
+ax.set_title("Typical talk length by session, 2010-2020")
+plt.tight_layout()
+plt.show()
+```
+
+### A bar chart of counts
+
+```{python}
+ax = session_counts.sort_values().plot.barh(figsize=(9, 5))
+ax.set_xlabel("Number of talks")
+ax.set_ylabel("Session")
+plt.tight_layout()
+plt.show()
+```
+
+### A line chart over time
+
+```{python}
+ax = annual.plot.line(
+    x="talk_year", y="median_words", marker="o", legend=False,
+    figsize=(9, 5)
+)
+ax.set_xlabel("Year")
+ax.set_ylabel("Median word count")
+ax.set_title("Typical talk length by year")
+ax.set_xticks(annual["talk_year"])
+plt.tight_layout()
+plt.show()
+```
+
+### A histogram of individual talk lengths
+
+```{python}
+ax = talks["num_words"].plot.hist(bins=20, figsize=(9, 5))
+ax.set_xlabel("Word count")
+ax.set_ylabel("Number of talks")
+plt.tight_layout()
+plt.show()
+```
+
+A categorical bar represents a session. A line-chart point represents a year.
+A histogram bar counts talks whose word counts fall in a numeric interval.
+
+## Checkpoint 6: Final request
+
+For recorded talks from 2018 through 2020:
+
+1. Compare median word counts across session categories and report counts.
+2. Retain categories with at least ten talks and order by median word count.
+3. Make a bar chart of that summary.
+4. Identify talks in the retained categories that exceed their own session's
+   median **calculated from the 2018-2020 talks**.
+5. Write one interpretation and one limitation.
+
+### Select the reference observations
+
+```{python}
+recent = talks.loc[talks["year"].between(2018, 2020)].copy()
+len(recent)
+```
+
+### Summarize, filter groups, and order
+
+```{python}
+recent_summary = recent.groupby("session", as_index=False).agg(
+    n_talks=("num_words", "size"),
+    median_words=("num_words", "median"),
+)
+
+eligible = (
+    recent_summary.loc[recent_summary["n_talks"] >= 10]
+    .sort_values("median_words", ascending=False)
+)
+eligible
+```
+
+There are 201 recent talks, seven observed session categories, and six categories
+that meet the ten-talk condition. Seven Saturday evening talks fall outside the
+retained categories, leaving 194 talks in eligible categories.
+
+### Plot the group summary
+
+```{python}
+ax = eligible.sort_values("median_words").plot.barh(
+    x="session", y="median_words", legend=False, figsize=(9, 5)
+)
+ax.set_xlabel("Median word count")
+ax.set_ylabel("Session")
+ax.set_title("Sessions with at least 10 talks, 2018-2020")
+plt.tight_layout()
+plt.show()
+```
+
+### Attach references and identify qualifying talks
+
+```{python}
+recent["session_median_words"] = (
+    recent.groupby("session")["num_words"].transform("median")
+)
+
+above_mask = (
+    recent["session"].isin(eligible["session"])
+    & (recent["num_words"] > recent["session_median_words"])
+)
+
+above_recent = recent.loc[
+    above_mask,
+    ["talk_name", "speaker", "session", "year", "num_words",
+     "session_median_words"],
+].sort_values(["session", "num_words"], ascending=[True, False])
+
+len(above_recent), above_recent.head()
+```
+
+### Check the answer
+
+```{python}
+checks = {
+    "201_recent_talks": len(recent) == 201,
+    "all_groups_accounted_for": recent_summary["n_talks"].sum() == len(recent),
+    "six_eligible_sessions": len(eligible) == 6,
+    "all_eligible_counts": eligible["n_talks"].ge(10).all(),
+    "194_talks_in_eligible_sessions": eligible["n_talks"].sum() == 194,
+    "95_above_median_talks": len(above_recent) == 95,
+    "allowed_years": above_recent["year"].between(2018, 2020).all(),
+    "eligible_sessions": above_recent["session"].isin(eligible["session"]).all(),
+    "strictly_above_reference": above_recent["num_words"].gt(
+        above_recent["session_median_words"]
+    ).all(),
+    "dates_match_supplied_years": talks["talk_year"].eq(talks["year"]).all(),
+}
+checks
+```
+
+### Interpretation and limitation
+
+Among session categories with at least ten recorded talks from 2018 through
+2020, Sunday morning has the largest median word count, at 1,790 words.
+
+This descriptive comparison does not establish that the session causes longer
+talks. Categories contain different sets of speakers and conference contexts.
+
+## Reflection
+
+- The year filter defines which observations contribute to the statistics.
+- Aggregation changes the unit from talk to session category.
+- The group-size filter selects summary rows.
+- Transformation returns the group reference to each talk.
+- The final mask selects individual talks using their reference and membership.
+- The summary table supplies the inputs for the bar chart.
