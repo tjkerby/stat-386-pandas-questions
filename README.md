@@ -1,4 +1,4 @@
-# STAT 386: Answering questions with pandas
+# STAT 386: Answering questions with advanced pandas
 
 This Quarto website continues the pandas foundations lesson. Students begin by
 decoding a familiar pandas pipeline and writing a new one, then learn grouped
